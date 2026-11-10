@@ -904,6 +904,7 @@
                   <th class="py-2.5 px-3">Lokasi</th>
                   <th class="py-2.5 px-3">Operator Unit</th>
                   <th class="py-2.5 px-3">No. Voucher / Bon</th>
+                  <th class="py-2.5 px-3 text-center">Foto</th>
                   <th class="py-2.5 px-3">Catatan</th>
                 </tr>
               </thead>
@@ -925,11 +926,14 @@
               <h2 class="text-xl sm:text-2xl font-bold text-white">Ringkasan Operasional & Keuangan Kasir</h2>
               <p class="text-sm text-slate-400">Pantau akumulasi jam kerja HM, distribusi solar, serta rincian belanja pengeluaran armada.</p>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              <button onclick="switchTab('inputLog')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition shadow">
+                <i class="fa-solid fa-file-circle-plus"></i> Input HM
+              </button>
               <button onclick="switchTab('expenseTab')" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition shadow">
                 <i class="fa-solid fa-receipt"></i> Catat Pengeluaran
               </button>
-              <button onclick="switchTab('fuelLog')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition shadow">
+              <button onclick="switchTab('fuelLog')" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold px-3.5 py-2.5 rounded-xl text-xs sm:text-sm flex items-center gap-1.5 transition shadow">
                 <i class="fa-solid fa-droplet"></i> Pengisian Solar
               </button>
             </div>
@@ -1508,7 +1512,7 @@
                     <i class="fa-solid fa-bucket text-amber-400 mr-1"></i> Jam Kerja Bucket
                   </label>
                   <div class="relative">
-                    <input type="number" step="0.1" min="0" max="24" id="logBucketHours" oninput="calculateTotalAttachmentHours()" required placeholder="0.0" value="0" class="w-full bg-amber-500/10 border-2 border-amber-500/40 rounded-lg py-2 px-3 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400">
+                    <input type="number" step="0.1" min="0" max="24" id="logBucketHours" oninput="calculateTotalAttachmentHours()" placeholder="0.0" value="0" class="w-full bg-amber-500/10 border-2 border-amber-500/40 rounded-lg py-2 px-3 text-sm font-bold text-amber-400 focus:outline-none focus:border-amber-400">
                     <span class="absolute right-3 top-2.5 text-xs text-amber-400/80 font-semibold">Jam</span>
                   </div>
                   <p class="text-[10px] text-slate-400 mt-1">Galian / loading standar</p>
@@ -1519,7 +1523,7 @@
                     <i class="fa-solid fa-hammer text-orange-400 mr-1"></i> Jam Kerja Breaker
                   </label>
                   <div class="relative">
-                    <input type="number" step="0.1" min="0" max="24" id="logBreakerHours" oninput="calculateTotalAttachmentHours()" required placeholder="0.0" value="0" class="w-full bg-orange-500/10 border-2 border-orange-500/40 rounded-lg py-2 px-3 text-sm font-bold text-orange-400 focus:outline-none focus:border-orange-400">
+                    <input type="number" step="0.1" min="0" max="24" id="logBreakerHours" oninput="calculateTotalAttachmentHours()" placeholder="0.0" value="0" class="w-full bg-orange-500/10 border-2 border-orange-500/40 rounded-lg py-2 px-3 text-sm font-bold text-orange-400 focus:outline-none focus:border-orange-400">
                     <span class="absolute right-3 top-2.5 text-xs text-orange-400/80 font-semibold">Jam</span>
                   </div>
                   <p class="text-[10px] text-slate-400 mt-1">Pemecahan batu / cor beton</p>
@@ -1725,9 +1729,41 @@
               <textarea id="fuelNotes" rows="2" placeholder="Catatan kondisi flow meter solar, sisa stok jerigen, dsb..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
             </div>
 
+            <!-- Upload Foto Dokumentasi Pengisian Solar (Opsional & Auto Kompresi ke Google Drive) -->
+            <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                <label class="block text-xs font-semibold text-slate-300">
+                  <i class="fa-solid fa-camera text-amber-500 mr-1"></i> Foto Bukti Pengisian Solar / Flow Meter / Bon (Opsional)
+                </label>
+                <span class="text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 px-2.5 py-0.5 rounded-full font-semibold self-start sm:self-auto">
+                  <i class="fa-solid fa-compress mr-1"></i> Auto Kompresi & Upload Google Drive
+                </span>
+              </div>
+              
+              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <label class="w-full sm:w-auto cursor-pointer bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-amber-500/60 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-200 transition flex items-center justify-center gap-2">
+                  <i class="fa-solid fa-cloud-arrow-up text-amber-400 text-sm"></i>
+                  <span>Pilih / Ambil Foto Solar</span>
+                  <input type="file" id="fuelImageInput" accept="image/*" class="hidden" onchange="handleFuelImageSelection(event)">
+                </label>
+                <div class="flex flex-col">
+                  <span id="fuelImageFileName" class="text-[11px] text-slate-500 truncate max-w-xs">Belum ada foto yang dipilih (Opsional)</span>
+                  <span id="fuelCompressionInfo" class="text-[10px] text-emerald-400 hidden"></span>
+                  <span id="fuelUploadStatusNotice" class="text-[10px] text-sky-400 hidden"><i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Mengompresi & menyimpan foto ke Google Drive...</span>
+                </div>
+              </div>
+
+              <div id="fuelImagePreviewContainer" class="hidden relative inline-block mt-2">
+                <img id="fuelImagePreviewEl" src="" alt="Preview Bukti Solar" class="h-28 w-44 object-cover rounded-xl border border-amber-500/40 shadow-md">
+                <button type="button" onclick="clearSelectedFuelImage()" title="Hapus Foto" class="absolute -top-2 -right-2 bg-rose-600 hover:bg-rose-500 text-white rounded-full h-6 w-6 flex items-center justify-center text-xs shadow-lg transition">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
             <div class="pt-2 flex gap-3">
-              <button type="submit" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-amber-500/20 active:scale-[0.99] transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Simpan Catatan Pengisian Solar
+              <button type="submit" id="saveFuelLogBtn" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-3 rounded-xl shadow-lg shadow-amber-500/20 active:scale-[0.99] transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> <span id="saveFuelLogBtnText">Simpan Catatan Pengisian Solar</span>
               </button>
               <button type="button" onclick="resetFuelLogForm()" class="px-5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3 rounded-xl transition">
                 Reset
@@ -1785,6 +1821,7 @@
                   <th class="py-2.5 px-3">Nama Operator</th>
                   <th class="py-2.5 px-3">Helper / Pengisi</th>
                   <th class="py-2.5 px-3">Voucher / Catatan</th>
+                  <th class="py-2.5 px-3 text-center">Foto</th>
                   <th class="py-2.5 px-3 text-center">WhatsApp</th>
                   <th class="py-2.5 px-3 text-right">Aksi</th>
                 </tr>
@@ -2733,7 +2770,7 @@ function doPost(e) {
 
     // 2. Handler Khusus: Upload Foto Langsung ke Google Drive
     if (data.action === "uploadImage" || (data.imageBlobBase64 && data.isPhotoUploadOnly)) {
-      var folderName = "DOKUMENTASI_HM_PIT_RENTAL";
+      var folderName = data.folderName || "DOKUMENTASI_HM_PIT_RENTAL";
       var folders = DriveApp.getFoldersByName(folderName);
       var targetFolder = folders.hasNext() ? folders.next() : DriveApp.createFolder(folderName);
 
@@ -3285,120 +3322,23 @@ function doPost(e) {
       { id: 'USR-04', username: 'kasir_site', password: 'password123', name: 'Kasir Operasional', role: 'kasir' }
     ];
 
-    /* Default Master Data Truk */
-    const DEFAULT_TRUCKS = [
-      { id: 'TRK-01', name: 'Dump Truck 01 (Hino 500)', plateNumber: 'DK 8101 AB', model: 'Hino 500 FM 260 Ti', defaultDriver: 'Wayan Sudira', phone: '081234567801', status: 'Aktif' },
-      { id: 'TRK-02', name: 'Dump Truck 02 (Fuso Fighter)', plateNumber: 'DK 8202 BC', model: 'Mitsubishi Fuso FN 527', defaultDriver: 'Ketut Astawa', phone: '081234567802', status: 'Aktif' },
-      { id: 'TRK-03', name: 'Colt Diesel 03 (Canter HD)', plateNumber: 'DK 8303 CD', model: 'Mitsubishi Canter FE 74 HD', defaultDriver: 'Gede Suartama', phone: '081234567803', status: 'Standby' }
-    ];
+    /* Default Master Data Truk (Dikosongkan total tanpa dummy) */
+    const DEFAULT_TRUCKS = [];
 
-    /* Default Data Kiriman Truk */
-    const DEFAULT_TRUCK_SHIPMENTS = [
-      {
-        id: 'SHP-101',
-        date: '2026-11-04',
-        truckId: 'TRK-01',
-        truckName: 'Dump Truck 01 (Hino 500) - DK 8101 AB',
-        driverName: 'Wayan Sudira',
-        destination: 'Proyek Tol Denpasar-Gilimanuk STA 14',
-        doNumber: 'SJ-2026/088',
-        items: [
-          { name: 'Batu Belah 15/20', quantity: '12', unit: 'M3' },
-          { name: 'Pasir Cor Extra', quantity: '8', unit: 'M3' }
-        ],
-        paymentStatus: 'Lunas', // Lunas, Bon, COD
-        paymentAmount: 1850000,
-        clientName: 'PT Wikan Triyuda',
-        notes: 'Diterima oleh mandor proyek di lokasi.'
-      },
-      {
-        id: 'SHP-102',
-        date: '2026-11-04',
-        truckId: 'TRK-02',
-        truckName: 'Dump Truck 02 (Fuso Fighter) - DK 8202 BC',
-        driverName: 'Ketut Astawa',
-        destination: 'Quarry Buleleng Sektor Utara',
-        doNumber: 'SJ-2026/089',
-        items: [
-          { name: 'Sirtu Urugan Pilihan', quantity: '2', unit: 'Ritase' }
-        ],
-        paymentStatus: 'Bon',
-        paymentAmount: 950000,
-        clientName: 'CV Antos Future',
-        notes: 'Nota tagihan jatuh tempo 7 hari.'
-      }
-    ];
+    /* Default Data Kiriman Truk (Dikosongkan total tanpa dummy) */
+    const DEFAULT_TRUCK_SHIPMENTS = [];
 
-    /* Default Equipments */
-    const DEFAULT_EQUIPMENTS = [
-      { id: 'EQ-01', code: 'EX-201', category: 'Excavator', model: 'Komatsu PC200-8', currentHM: 2460.5 },
-      { id: 'EQ-02', code: 'BD-05', category: 'Bulldozer', model: 'Caterpillar D6R XL', currentHM: 1820.0 },
-      { id: 'EQ-03', code: 'WL-02', category: 'Wheel Loader', model: 'Liugong 856H', currentHM: 940.2 },
-      { id: 'EQ-04', code: 'DT-18', category: 'Dump Truck', model: 'Hino 500 FM 260 Ti', currentHM: 3120.0 }
-    ];
+    /* Default Equipments (Dikosongkan total tanpa data dummy otomatis) */
+    const DEFAULT_EQUIPMENTS = [];
 
-    const DEFAULT_LOGS = [
-      {
-        id: 'LOG-101',
-        date: '2026-11-03',
-        equipmentId: 'EQ-01',
-        equipmentCode: 'EX-201 (Excavator - Komatsu PC200-8)',
-        operator: 'Budi Hartono',
-        location: 'Quarry Pit Sektor A',
-        startTime: '08:00',
-        endTime: '17:00',
-        bucketHours: 5.5,
-        breakerHours: 2.5,
-        totalHours: 8.0,
-        hmAwal: 2452.5,
-        hmAkhir: 2460.5,
-        totalHm: 8.0,
-        notes: 'Pekerjaan bongkar batu keras di pit selatan.',
-        synced: false
-      }
-    ];
+    // Dihapus total tanpa data dummy agar bersih
+    const DEFAULT_LOGS = [];
 
-    const DEFAULT_FUEL_LOGS = [
-      {
-        id: 'FUEL-101',
-        date: '2026-11-03',
-        time: '07:30',
-        equipmentId: 'EQ-01',
-        equipmentCode: 'EX-201 (Excavator - Komatsu PC200-8)',
-        liters: 150,
-        location: 'Quarry Pit Sektor A',
-        operatorName: 'Budi Hartono',
-        helperName: 'Ketut Helper',
-        voucherNo: 'SL-8801',
-        notes: 'Pengisian pagi awal shift dari truk tangki.'
-      },
-      {
-        id: 'FUEL-102',
-        date: '2026-11-03',
-        time: '12:30',
-        equipmentId: 'EQ-02',
-        equipmentCode: 'BD-05 (Bulldozer - Caterpillar D6R XL)',
-        liters: 120,
-        location: 'Hauling Road KM 12',
-        operatorName: 'Ahmad Faisal',
-        helperName: 'Ketut Helper',
-        voucherNo: 'SL-8802',
-        notes: 'Top-up tengah hari.'
-      }
-    ];
+    // Pastikan DEFAULT_FUEL_LOGS kosong total tanpa data dummy
+    const DEFAULT_FUEL_LOGS = [];
 
-    const DEFAULT_SERVICES = [
-      {
-        id: 'SRV-01',
-        equipmentId: 'EQ-01',
-        serviceType: 'Servis Berkala 250 Jam (PS 250)',
-        targetHM: 2500.0,
-        targetDate: '2026-11-10',
-        mechanic: 'PT United Tractors Mekanik',
-        parts: 'Filter oli, filter solar, oli mesin 15W40',
-        status: 'APPROACHING'
-      }
-    ];
+    // Dihapus total tanpa data dummy agar bersih
+    const DEFAULT_SERVICES = [];
 
     // Current State
     let currentUser = null;
@@ -3415,6 +3355,7 @@ function doPost(e) {
     const DEFAULT_STATIC_GSHEETS_URL = "https://script.google.com/macros/s/AKfycbwq1uV92-1fJ0JXonTxN1m8xG9yGVAfS7LF-JXUi6NLkprS8H66CFkttjS5Mx-kdJCW/exec";
     let googleSheetsUrl = DEFAULT_STATIC_GSHEETS_URL;
     let currentUploadedImageData = '';
+    let currentUploadedFuelImageData = '';
     let whatsappTargetNumber = '6287762224890';
     let whatsappFeatureEnabled = true;
     let currentDashboardPeriod = 'MONTHLY';
@@ -3518,100 +3459,110 @@ function doPost(e) {
 
     function setupCloudRealtimeListeners() {
       if (!db || !window.__fb_sdk) return;
-      const { collection, onSnapshot, doc, setDoc } = window.__fb_sdk;
+      const { collection, onSnapshot } = window.__fb_sdk;
 
-      // Master Truk
+      const extractCleanDocs = (snapshot, collectionName) => {
+        const list = [];
+        if (!snapshot.empty) {
+          snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            const docId = data?.id || docSnap.id;
+            if (LEGACY_DUMMY_IDS.has(docId)) {
+              // Hapus otomatis data dummy bawaan lama jika masih tersimpan di Cloud DB
+              cloudDeleteDocument(collectionName, docSnap.id);
+            } else {
+              list.push(data);
+            }
+          });
+        }
+        return list;
+      };
+
+      // Master Truk (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'trucks'), (snapshot) => {
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(docSnap => list.push(docSnap.data()));
-          trucks = list;
-          saveAllToStorage();
-          populateTruckDropdowns();
-          renderTruckMasterTable();
-        } else {
-          DEFAULT_TRUCKS.forEach(t => {
-            setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'trucks', t.id), t).catch(console.error);
-          });
-        }
+        trucks = extractCleanDocs(snapshot, 'trucks');
+        saveAllToStorage();
+        populateTruckDropdowns();
+        renderTruckMasterTable();
       }, console.error);
 
-      // Kiriman Truk
+      // Kiriman Truk (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'truck_shipments'), (snapshot) => {
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(docSnap => list.push(docSnap.data()));
-          list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-          truckShipments = list;
-          saveAllToStorage();
-          renderTruckShipmentsTable();
-        } else {
-          DEFAULT_TRUCK_SHIPMENTS.forEach(s => {
-            setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'truck_shipments', s.id), s).catch(console.error);
-          });
-        }
+        const list = extractCleanDocs(snapshot, 'truck_shipments');
+        list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        truckShipments = list;
+        saveAllToStorage();
+        renderTruckShipmentsTable();
       }, console.error);
 
-      // 1. Equipments
+      // 1. Equipments (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'equipments'), (snapshot) => {
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(docSnap => list.push(docSnap.data()));
-          equipments = list;
-          saveAllToStorage();
-          populateEquipmentDropdowns();
-          populateInvoiceFilters();
-          recalculateServiceStatuses();
-          updateDashboardKPIs();
-          renderServiceTable();
-        }
+        equipments = extractCleanDocs(snapshot, 'equipments');
+        saveAllToStorage();
+        populateEquipmentDropdowns();
+        populateInvoiceFilters();
+        recalculateServiceStatuses();
+        updateDashboardKPIs();
+        renderServiceTable();
+        if (typeof renderManageEquipmentList === 'function') renderManageEquipmentList();
       }, console.error);
 
-      // 2. Daily Logs
+      // 2. Daily Logs (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'daily_logs'), (snapshot) => {
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(docSnap => list.push(docSnap.data()));
-          list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-          dailyLogs = list;
-          saveAllToStorage();
-          updateDashboardKPIs();
-          renderDashboardRecentLogs();
-          renderDailyLogsTable();
-          generateInvoicePreview();
-        }
+        const list = extractCleanDocs(snapshot, 'daily_logs');
+        list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        dailyLogs = list;
+        saveAllToStorage();
+        updateDashboardKPIs();
+        renderDashboardRecentLogs();
+        renderDailyLogsTable();
+        generateInvoicePreview();
+        if (typeof updateOperatorDashboard === 'function') updateOperatorDashboard();
+        if (typeof updateKasirDashboard === 'function') updateKasirDashboard();
       }, console.error);
 
-      // 3. Fuel Logs (BARU)
+      // 3. Fuel Logs (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'fuel_logs'), (snapshot) => {
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(docSnap => list.push(docSnap.data()));
-          list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-          fuelLogs = list;
-          saveAllToStorage();
-          updateDashboardKPIs();
-          renderFuelLogsTable();
-        } else {
-          DEFAULT_FUEL_LOGS.forEach(fl => {
-            setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'fuel_logs', fl.id), fl).catch(console.error);
-          });
-        }
+        const list = extractCleanDocs(snapshot, 'fuel_logs');
+        list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        fuelLogs = list;
+        saveAllToStorage();
+        updateDashboardKPIs();
+        renderFuelLogsTable();
+        if (typeof updateHelperDashboard === 'function') updateHelperDashboard();
+        if (typeof updateKasirDashboard === 'function') updateKasirDashboard();
       }, console.error);
 
-      // 4. Expenses
+      // 4. Pengeluaran Unit / Equipment Expenses (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'equipment_expenses'), (snapshot) => {
-        if (!snapshot.empty) {
-          const list = [];
-          snapshot.forEach(docSnap => list.push(docSnap.data()));
-          equipmentExpenses = list;
-          saveAllToStorage();
-          updateDashboardKPIs();
-          renderExpensesTable();
-        }
+        const list = extractCleanDocs(snapshot, 'equipment_expenses');
+        list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        equipmentExpenses = list;
+        saveAllToStorage();
+        updateDashboardKPIs();
+        renderExpensesTable();
+        if (typeof updateKasirDashboard === 'function') updateKasirDashboard();
       }, console.error);
 
-      // 5. Users
+      // 5. Jadwal Servis / Service Schedules (Murni Real-Time Tanpa Dummy)
+      onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'service_schedules'), (snapshot) => {
+        serviceSchedules = extractCleanDocs(snapshot, 'service_schedules');
+        recalculateServiceStatuses();
+        saveAllToStorage();
+        updateDashboardKPIs();
+        renderServiceTable();
+      }, console.error);
+
+      // 6. Riwayat Servis / Service Action History (Murni Real-Time Tanpa Dummy)
+      onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'service_history'), (snapshot) => {
+        const list = extractCleanDocs(snapshot, 'service_history');
+        list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+        serviceActionHistory = list;
+        saveAllToStorage();
+        renderServiceHistoryTable();
+      }, console.error);
+
+      // 7. Users
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snapshot) => {
         if (!snapshot.empty) {
           const list = [];
@@ -3640,6 +3591,7 @@ function doPost(e) {
         const { doc, deleteDoc } = window.__fb_sdk;
         const docRef = doc(db, 'artifacts', appId, 'public', 'data', collectionName, docId);
         await deleteDoc(docRef);
+        console.log(`Berhasil menghapus dokumen ${docId} dari koleksi ${collectionName}`);
       } catch (err) {
         console.error(`Gagal hapus cloud [${collectionName}]:`, err);
       }
@@ -3850,15 +3802,40 @@ function doPost(e) {
       showToast('Pengaturan laporan WhatsApp berhasil disimpan!', 'success');
     }
 
-    function sendLogToWhatsApp(logId) {
+    /* Helper Pembuka Tab WhatsApp Anti-Blokir Popup Browser */
+    function openWhatsAppTab(waUrl, preOpenedWin = null) {
+      try {
+        if (preOpenedWin && !preOpenedWin.closed) {
+          preOpenedWin.location.href = waUrl;
+          preOpenedWin.focus();
+          return;
+        }
+      } catch (e) {}
+
+      // Coba buka tab baru menggunakan elemen anchor <a> secara programatik
+      const a = document.createElement('a');
+      a.href = waUrl;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    function sendLogToWhatsApp(logId, preOpenedWin = null) {
       if (!whatsappFeatureEnabled) {
+        if (preOpenedWin && !preOpenedWin.closed) preOpenedWin.close();
         showToast('Fitur laporan WhatsApp sedang dinonaktifkan.', 'info');
         return;
       }
       const log = dailyLogs.find(l => l.id === logId);
-      if (!log) return;
+      if (!log) {
+        if (preOpenedWin && !preOpenedWin.closed) preOpenedWin.close();
+        return;
+      }
 
       const totalJam = log.totalHours || (parseFloat(log.bucketHours || 0) + parseFloat(log.breakerHours || 0)).toFixed(1);
+      const photoLine = log.photoDriveUrl ? `📷 *Foto Bukti HM (G-Drive):* ${log.photoDriveUrl}\n` : '';
       const message = `*LAPORAN HARIAN OPERASIONAL ALAT BERAT*\n` +
                       `*PIT RENTAL ALAT BERAT*\n` +
                       `------------------------------------------\n` +
@@ -3877,6 +3854,7 @@ function doPost(e) {
                       `• HM Awal: ${log.hmAwal}\n` +
                       `• HM Akhir: ${log.hmAkhir}\n` +
                       `• *Selisih HM Alat:* *${log.totalHm} HM*\n` +
+                      photoLine +
                       `------------------------------------------\n` +
                       `📝 *Catatan:* ${log.notes || '-'}\n` +
                       `_Dikirim via Sistem Pit Rental Alat Berat_`;
@@ -3885,7 +3863,7 @@ function doPost(e) {
       const cleanPhone = (whatsappTargetNumber || '').replace(/[^0-9]/g, '');
       const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodedMsg}` : `https://api.whatsapp.com/send?text=${encodedMsg}`;
 
-      window.open(waUrl, '_blank');
+      openWhatsAppTab(waUrl, preOpenedWin);
       showToast('Membuka WhatsApp...', 'success');
     }
 
@@ -3946,14 +3924,19 @@ function doPost(e) {
     }
 
     /* Pengiriman Laporan Pengisian Solar via WhatsApp */
-    function sendFuelLogToWhatsApp(fuelId) {
+    function sendFuelLogToWhatsApp(fuelId, preOpenedWin = null) {
       if (!whatsappFeatureEnabled) {
+        if (preOpenedWin && !preOpenedWin.closed) preOpenedWin.close();
         showToast('Fitur laporan WhatsApp sedang nonaktif. Aktifkan di menu WhatsApp.', 'warning');
         return;
       }
       const fl = fuelLogs.find(f => f.id === fuelId);
-      if (!fl) return;
+      if (!fl) {
+        if (preOpenedWin && !preOpenedWin.closed) preOpenedWin.close();
+        return;
+      }
 
+      const photoLine = fl.photoDriveUrl ? `📷 *Foto Bukti (G-Drive):* ${fl.photoDriveUrl}\n` : (fl.imageData ? `📷 *Foto Bukti:* Tersedia di Sistem\n` : '');
       const message = `*BUKTI PENGISIAN BAHAN BAKAR (SOLAR)*\n` +
                       `*PIT RENTAL ALAT BERAT*\n` +
                       `==========================================\n` +
@@ -3964,6 +3947,7 @@ function doPost(e) {
                       `👷‍♂️ *Operator Unit:* ${fl.operatorName || '-'}\n` +
                       `🧑‍🔧 *Helper / Pengisi:* ${fl.helperName || '-'}\n` +
                       `🎫 *No. Voucher / Bon:* ${fl.voucherNo || '-'}\n` +
+                      photoLine +
                       `==========================================\n` +
                       `📝 *Catatan:* ${fl.notes || '-'}\n` +
                       `_Laporan Suplai BBM Solar Terverifikasi_`;
@@ -3972,7 +3956,7 @@ function doPost(e) {
       const cleanPhone = (whatsappTargetNumber || '').replace(/[^0-9]/g, '');
       const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodedMsg}` : `https://api.whatsapp.com/send?text=${encodedMsg}`;
 
-      window.open(waUrl, '_blank');
+      openWhatsAppTab(waUrl, preOpenedWin);
       showToast('Membuka WhatsApp untuk mengirim bukti solar...', 'success');
     }
 
@@ -4045,6 +4029,23 @@ function doPost(e) {
       if (expDate) expDate.value = today;
     }
 
+    // Daftar ID dummy bawaan versi lama yang otomatis dibersihkan agar tidak muncul kembali
+    const LEGACY_DUMMY_IDS = new Set([
+      'EQ-01', 'EQ-02', 'EQ-03', 'EQ-04',
+      'EXP-01', 'EXP-02', 'EXP-03', 'EXP-04', 'EXP-1', 'EXP-2',
+      'LOG-01', 'LOG-02', 'LOG-03', 'LOG-04', 'LOG-05',
+      'FUEL-01', 'FUEL-02', 'FUEL-03', 'FUEL-04', 'FUEL-05',
+      'SRV-01', 'SRV-02', 'SRV-03', 'SRV-04',
+      'SVCACT-01', 'SVCACT-02', 'SVCACT-03',
+      'TRK-01', 'TRK-02', 'TRK-03',
+      'SHP-01', 'SHP-02', 'SHP-03'
+    ]);
+
+    function filterOutLegacyDummy(arr) {
+      if (!Array.isArray(arr)) return [];
+      return arr.filter(item => item && !LEGACY_DUMMY_IDS.has(item.id));
+    }
+
     function loadStorageData() {
       try {
         const storedUsers = localStorage.getItem('heavy_app_users');
@@ -4052,28 +4053,28 @@ function doPost(e) {
         if (!Array.isArray(appUsers) || appUsers.length === 0) appUsers = DEFAULT_USERS;
 
         const storedTrucks = localStorage.getItem('heavy_truck_master');
-        trucks = storedTrucks ? JSON.parse(storedTrucks) : DEFAULT_TRUCKS;
+        trucks = filterOutLegacyDummy(storedTrucks ? JSON.parse(storedTrucks) : []);
 
         const storedShipments = localStorage.getItem('heavy_truck_shipments');
-        truckShipments = storedShipments ? JSON.parse(storedShipments) : DEFAULT_TRUCK_SHIPMENTS;
+        truckShipments = filterOutLegacyDummy(storedShipments ? JSON.parse(storedShipments) : []);
 
         const storedEquip = localStorage.getItem('heavy_equipments');
-        equipments = storedEquip ? JSON.parse(storedEquip) : DEFAULT_EQUIPMENTS;
+        equipments = filterOutLegacyDummy(storedEquip ? JSON.parse(storedEquip) : []);
 
         const storedLogs = localStorage.getItem('heavy_daily_logs');
-        dailyLogs = storedLogs ? JSON.parse(storedLogs) : DEFAULT_LOGS;
+        dailyLogs = filterOutLegacyDummy(storedLogs ? JSON.parse(storedLogs) : []);
 
         const storedFuel = localStorage.getItem('heavy_fuel_logs');
-        fuelLogs = storedFuel ? JSON.parse(storedFuel) : DEFAULT_FUEL_LOGS;
+        fuelLogs = filterOutLegacyDummy(storedFuel ? JSON.parse(storedFuel) : []);
 
         const storedServices = localStorage.getItem('heavy_services');
-        serviceSchedules = storedServices ? JSON.parse(storedServices) : DEFAULT_SERVICES;
+        serviceSchedules = filterOutLegacyDummy(storedServices ? JSON.parse(storedServices) : []);
 
         const storedSvcHistory = localStorage.getItem('heavy_service_history');
-        serviceActionHistory = storedSvcHistory ? JSON.parse(storedSvcHistory) : [];
+        serviceActionHistory = filterOutLegacyDummy(storedSvcHistory ? JSON.parse(storedSvcHistory) : []);
 
         const storedExpenses = localStorage.getItem('heavy_equipment_expenses');
-        equipmentExpenses = storedExpenses ? JSON.parse(storedExpenses) : [];
+        equipmentExpenses = filterOutLegacyDummy(storedExpenses ? JSON.parse(storedExpenses) : []);
 
         const storedChecklist = localStorage.getItem('heavy_service_checklists');
         serviceChecklistItems = storedChecklist ? JSON.parse(storedChecklist) : DEFAULT_CHECKLIST_ITEMS;
@@ -4083,15 +4084,19 @@ function doPost(e) {
         whatsappTargetNumber = localStorage.getItem('heavy_wa_target_number') || '6287762224890';
         const storedWaEnabled = localStorage.getItem('heavy_wa_enabled');
         whatsappFeatureEnabled = storedWaEnabled !== null ? (storedWaEnabled === 'true') : true;
+
+        saveAllToStorage();
       } catch (e) {
         console.error("Local storage error:", e);
         appUsers = DEFAULT_USERS;
-        trucks = DEFAULT_TRUCKS;
-        truckShipments = DEFAULT_TRUCK_SHIPMENTS;
-        equipments = DEFAULT_EQUIPMENTS;
-        dailyLogs = DEFAULT_LOGS;
-        fuelLogs = DEFAULT_FUEL_LOGS;
-        serviceSchedules = DEFAULT_SERVICES;
+        trucks = [];
+        truckShipments = [];
+        equipments = [];
+        dailyLogs = [];
+        fuelLogs = [];
+        serviceSchedules = [];
+        serviceActionHistory = [];
+        equipmentExpenses = [];
       }
     }
 
@@ -4407,16 +4412,22 @@ function doPost(e) {
         if (mSideInvoice) mSideInvoice.classList.add('hidden');
       }
 
-      // 4. Selalu arahkan ke Dashboard peran masing-masing saat direfresh atau login
-      if (role === 'operator') {
-        switchTab('operatorDashboard');
-      } else if (role === 'helper') {
-        switchTab('helperDashboard');
-      } else if (role === 'kasir') {
-        switchTab('kasirDashboard');
-      } else {
-        switchTab('dashboard');
+      // 4. Pertahankan menu/tab terakhir saat halaman direfresh (jika diizinkan untuk peran tersebut)
+      let defaultRoleTab = 'dashboard';
+      if (role === 'operator') defaultRoleTab = 'operatorDashboard';
+      else if (role === 'helper') defaultRoleTab = 'helperDashboard';
+      else if (role === 'kasir') defaultRoleTab = 'kasirDashboard';
+
+      let targetTab = defaultRoleTab;
+      if (isRefresh) {
+        try {
+          const savedTab = localStorage.getItem('heavy_active_tab');
+          if (savedTab && isTabAllowedForRole(savedTab, role)) {
+            targetTab = savedTab;
+          }
+        } catch (e) {}
       }
+      switchTab(targetTab);
 
       // Populate Data ke UI secara aman
       try {
@@ -4940,11 +4951,17 @@ function doPost(e) {
       if (tbody) {
         tbody.innerHTML = '';
         if (hlpLogs.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-500">Belum ada pengisian solar yang Anda catat.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" class="py-6 text-center text-slate-500">Belum ada pengisian solar yang Anda catat.</td></tr>';
         } else {
           hlpLogs.slice().reverse().forEach(fl => {
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-slate-800/40';
+            const photoBtn = (fl.photoDriveUrl || fl.imageData) ? `
+              <button type="button" onclick="openImageViewerModal('${fl.photoDriveUrl || fl.imageData}', 'Bukti Solar: ${fl.equipmentCode} (${fl.liters}L)')" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1 mx-auto transition">
+                <i class="fa-solid ${fl.photoDriveUrl ? 'fa-brands fa-google-drive text-emerald-400' : 'fa-image'}"></i> Foto
+              </button>
+            ` : `<span class="text-slate-600">-</span>`;
+
             tr.innerHTML = `
               <td class="py-3 px-3 font-mono text-slate-300">${fl.date} ${fl.time || ''}</td>
               <td class="py-3 px-3 font-bold text-amber-400">${fl.equipmentCode}</td>
@@ -4952,6 +4969,7 @@ function doPost(e) {
               <td class="py-3 px-3 text-slate-300">${fl.location}</td>
               <td class="py-3 px-3 text-white">${fl.operatorName}</td>
               <td class="py-3 px-3 font-mono text-amber-400/90">${fl.voucherNo || '-'}</td>
+              <td class="py-3 px-3 text-center">${photoBtn}</td>
               <td class="py-3 px-3 text-slate-400 text-[11px] max-w-xs truncate">${fl.notes || '-'}</td>
             `;
             tbody.appendChild(tr);
@@ -4967,10 +4985,18 @@ function doPost(e) {
           hlpLogs.slice().reverse().forEach(fl => {
             const card = document.createElement('div');
             card.className = 'bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2';
+            const mobilePhotoBtn = (fl.photoDriveUrl || fl.imageData) ? `
+              <button type="button" onclick="openImageViewerModal('${fl.photoDriveUrl || fl.imageData}', 'Bukti Solar: ${fl.equipmentCode} (${fl.liters}L)')" class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1">
+                <i class="fa-solid ${fl.photoDriveUrl ? 'fa-brands fa-google-drive text-emerald-400' : 'fa-image'}"></i> Foto
+              </button>
+            ` : '';
             card.innerHTML = `
               <div class="flex justify-between items-start">
                 <div class="text-xs font-bold text-amber-400">${fl.equipmentCode}</div>
-                <span class="text-sm font-black text-amber-300 font-mono">${fl.liters} L</span>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-sm font-black text-amber-300 font-mono">${fl.liters} L</span>
+                  ${mobilePhotoBtn}
+                </div>
               </div>
               <div class="text-[11px] text-slate-400">${fl.date} ${fl.time} &bull; ${fl.location}</div>
               <div class="flex justify-between text-xs text-slate-300 pt-1 border-t border-slate-850">
@@ -4985,9 +5011,81 @@ function doPost(e) {
     }
 
     /* ================= MODUL PENGISIAN SOLAR (FUEL LOG) ================= */
+    function handleFuelImageSelection(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const originalSizeKB = Math.round(file.size / 1024);
+      const fileNameLabel = document.getElementById('fuelImageFileName');
+      const compInfoLabel = document.getElementById('fuelCompressionInfo');
+      if (fileNameLabel) fileNameLabel.innerText = file.name;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          // Kompresi pintar (maks dimensi 800px & kualitas JPEG 0.65) untuk menghemat storage Google Drive & Cloud DB
+          const maxDim = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          currentUploadedFuelImageData = canvas.toDataURL('image/jpeg', 0.65);
+
+          // Hitung ukuran hasil kompresi
+          const base64Length = currentUploadedFuelImageData.length - ('data:image/jpeg;base64,').length;
+          const compressedSizeKB = Math.max(1, Math.round((base64Length * 3 / 4) / 1024));
+
+          if (compInfoLabel) {
+            compInfoLabel.innerHTML = `<i class="fa-solid fa-bolt mr-1"></i> Terkompresi: ${originalSizeKB} KB &rarr; <strong>${compressedSizeKB} KB</strong> (Hemat Storage)`;
+            compInfoLabel.classList.remove('hidden');
+          }
+
+          const previewContainer = document.getElementById('fuelImagePreviewContainer');
+          const previewEl = document.getElementById('fuelImagePreviewEl');
+          if (previewContainer && previewEl) {
+            previewEl.src = currentUploadedFuelImageData;
+            previewContainer.classList.remove('hidden');
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearSelectedFuelImage() {
+      currentUploadedFuelImageData = '';
+      const input = document.getElementById('fuelImageInput');
+      const label = document.getElementById('fuelImageFileName');
+      const compInfo = document.getElementById('fuelCompressionInfo');
+      const preview = document.getElementById('fuelImagePreviewContainer');
+      const notice = document.getElementById('fuelUploadStatusNotice');
+      if (input) input.value = '';
+      if (label) label.innerText = 'Belum ada foto yang dipilih (Opsional)';
+      if (compInfo) {
+        compInfo.innerText = '';
+        compInfo.classList.add('hidden');
+      }
+      if (preview) preview.classList.add('hidden');
+      if (notice) notice.classList.add('hidden');
+    }
+
     function resetFuelLogForm() {
       const form = document.getElementById('fuelLogForm');
       if (form) form.reset();
+      clearSelectedFuelImage();
       initDefaultDate();
       const timeInput = document.getElementById('fuelTime');
       if (timeInput) timeInput.value = '07:30';
@@ -4998,7 +5096,7 @@ function doPost(e) {
       }
     }
 
-    function handleSaveFuelLog(e) {
+    async function handleSaveFuelLog(e) {
       e.preventDefault();
       const equipId = document.getElementById('fuelEquipSelect')?.value;
       const equip = equipments.find(eq => eq.id === equipId);
@@ -5013,6 +5111,44 @@ function doPost(e) {
         return;
       }
 
+      const saveBtn = document.getElementById('saveFuelLogBtn');
+      const saveBtnText = document.getElementById('saveFuelLogBtnText');
+      const notice = document.getElementById('fuelUploadStatusNotice');
+
+      let preOpenedWaWin = null;
+      if (whatsappFeatureEnabled && currentUploadedFuelImageData) {
+        try {
+          preOpenedWaWin = window.open('about:blank', '_blank');
+          if (preOpenedWaWin && preOpenedWaWin.document) {
+            preOpenedWaWin.document.write('<title>Menyiapkan Laporan WhatsApp...</title><body style="background:#0f172a;color:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;"><h3>Mengunggah foto solar & menyiapkan pesan WhatsApp...</h3><p style="color:#94a3b8;font-size:13px;">Mohon tunggu sebentar, Anda akan diarahkan otomatis ke WhatsApp.</p></div></body>');
+          }
+        } catch (e) {}
+      }
+
+      let googleDrivePhotoUrl = '';
+
+      // JIKA ADA FOTO (OPSIONAL): Upload gambar terkompresi langsung ke Google Drive agar menghemat storage
+      if (currentUploadedFuelImageData) {
+        if (saveBtn) saveBtn.disabled = true;
+        if (saveBtnText) saveBtnText.innerText = 'Mengunggah Foto Solar ke Google Drive...';
+        if (notice) notice.classList.remove('hidden');
+
+        try {
+          googleDrivePhotoUrl = await uploadImageToGoogleDrive(
+            currentUploadedFuelImageData,
+            'SOLAR',
+            equip.code,
+            'DOKUMENTASI_SOLAR_PIT_RENTAL'
+          );
+        } catch (errUpload) {
+          console.warn("Gagal unggah foto solar ke Drive, lanjut simpan log:", errUpload);
+        } finally {
+          if (saveBtn) saveBtn.disabled = false;
+          if (saveBtnText) saveBtnText.innerText = 'Simpan Catatan Pengisian Solar';
+          if (notice) notice.classList.add('hidden');
+        }
+      }
+
       const newFuel = {
         id: 'FUEL-' + new Date().getTime(),
         date: document.getElementById('fuelDate').value,
@@ -5024,7 +5160,10 @@ function doPost(e) {
         operatorName: document.getElementById('fuelOperatorName').value.trim(),
         helperName: document.getElementById('fuelHelperName').value.trim(),
         voucherNo: document.getElementById('fuelVoucherNo').value.trim() || '-',
-        notes: document.getElementById('fuelNotes').value.trim()
+        notes: document.getElementById('fuelNotes').value.trim(),
+        // Jika berhasil diunggah ke Drive, simpan URL saja untuk menghemat storage lokal & Firestore
+        imageData: googleDrivePhotoUrl || currentUploadedFuelImageData || '',
+        photoDriveUrl: googleDrivePhotoUrl || ''
       };
 
       fuelLogs.push(newFuel);
@@ -5036,12 +5175,15 @@ function doPost(e) {
       updateHelperDashboard();
       renderFuelLogsTable();
       resetFuelLogForm();
-      showToast(`Pengisian solar ${liters} Liter untuk ${equip.code} berhasil disimpan!`, 'success');
+      showToast(
+        googleDrivePhotoUrl
+          ? `Pengisian solar ${liters}L & foto terkompresi berhasil disimpan di Google Drive!`
+          : `Pengisian solar ${liters} Liter untuk ${equip.code} berhasil disimpan!`,
+        'success'
+      );
 
       if (whatsappFeatureEnabled) {
-        setTimeout(() => {
-          sendFuelLogToWhatsApp(newFuel.id);
-        }, 500);
+        sendFuelLogToWhatsApp(newFuel.id, preOpenedWaWin);
       }
     }
 
@@ -5072,11 +5214,17 @@ function doPost(e) {
       if (tbody) {
         tbody.innerHTML = '';
         if (filtered.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-slate-500">Belum ada riwayat pengisian solar yang sesuai.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="10" class="py-6 text-center text-slate-500">Belum ada riwayat pengisian solar yang sesuai.</td></tr>';
         } else {
           filtered.forEach(fl => {
             const tr = document.createElement('tr');
             tr.className = 'hover:bg-slate-800/40 transition';
+            const photoCellHtml = (fl.photoDriveUrl || fl.imageData) ? `
+              <button type="button" onclick="openImageViewerModal('${fl.photoDriveUrl || fl.imageData}', 'Bukti Solar: ${fl.equipmentCode} (${fl.liters} Liter)')" class="px-2 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1 mx-auto transition">
+                <i class="fa-solid ${fl.photoDriveUrl ? 'fa-brands fa-google-drive text-emerald-400' : 'fa-image'}"></i> Foto
+              </button>
+            ` : `<span class="text-slate-600">-</span>`;
+
             tr.innerHTML = `
               <td class="py-3 px-3 font-mono text-slate-300 whitespace-nowrap">${fl.date} <span class="text-slate-500">${fl.time || ''}</span></td>
               <td class="py-3 px-3 font-bold text-amber-400">${fl.equipmentCode}</td>
@@ -5086,6 +5234,9 @@ function doPost(e) {
               <td class="py-3 px-3 text-slate-300">${fl.helperName}</td>
               <td class="py-3 px-3 text-slate-400 text-[11px] max-w-xs truncate" title="${fl.notes || ''}">
                 <span class="text-amber-400/90 font-mono font-semibold">${fl.voucherNo}</span> ${fl.notes ? `(${fl.notes})` : ''}
+              </td>
+              <td class="py-3 px-3 text-center whitespace-nowrap">
+                ${photoCellHtml}
               </td>
               <td class="py-3 px-3 text-center whitespace-nowrap">
                 <button onclick="sendFuelLogToWhatsApp('${fl.id}')" title="Kirim Laporan Solar via WA" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/40 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-semibold transition flex items-center justify-center gap-1 mx-auto">
@@ -5113,14 +5264,20 @@ function doPost(e) {
           filtered.forEach(fl => {
             const card = document.createElement('div');
             card.className = 'bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2';
+            const mobilePhotoBtn = (fl.photoDriveUrl || fl.imageData) ? `
+              <button type="button" onclick="openImageViewerModal('${fl.photoDriveUrl || fl.imageData}', 'Bukti Solar: ${fl.equipmentCode} (${fl.liters} Liter)')" class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1">
+                <i class="fa-solid ${fl.photoDriveUrl ? 'fa-brands fa-google-drive text-emerald-400' : 'fa-image'}"></i> Foto
+              </button>
+            ` : '';
             card.innerHTML = `
               <div class="flex justify-between items-start">
                 <div>
                   <div class="text-xs font-bold text-amber-400">${fl.equipmentCode}</div>
                   <div class="text-[10px] text-slate-400">${fl.date} &bull; ${fl.time} &bull; ${fl.location}</div>
                 </div>
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-1.5">
                   <span class="text-sm font-black text-amber-300 font-mono">${fl.liters} L</span>
+                  ${mobilePhotoBtn}
                   <button onclick="sendFuelLogToWhatsApp('${fl.id}')" class="px-2 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-bold flex items-center gap-1">
                     <i class="fa-brands fa-whatsapp"></i> WA
                   </button>
@@ -5158,10 +5315,14 @@ function doPost(e) {
         return;
       }
 
+      // Hapus dari state lokal
       fuelLogs = fuelLogs.filter(f => f.id !== id);
       saveAllToStorage();
+
+      // Hapus dari cloud database
       cloudDeleteDocument('fuel_logs', id);
 
+      // Segarkan tampilan
       renderFuelLogsTable();
       updateDashboardKPIs();
       if (typeof updateHelperDashboard === 'function') updateHelperDashboard();
@@ -5177,7 +5338,7 @@ function doPost(e) {
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "ID,Tanggal,Jam,Unit Alat,Jumlah Solar (Liter),Lokasi,Operator,Helper,No Voucher,Catatan\n";
+      csvContent += "ID,Tanggal,Jam,Unit Alat,Jumlah Solar (Liter),Lokasi,Operator,Helper,No Voucher,Link Foto Google Drive,Catatan\n";
 
       fuelLogs.forEach(fl => {
         const row = [
@@ -5190,6 +5351,7 @@ function doPost(e) {
           `"${fl.operatorName}"`,
           `"${fl.helperName}"`,
           `"${fl.voucherNo}"`,
+          `"${fl.photoDriveUrl || '-'}"`,
           `"${(fl.notes||'').replace(/"/g, '""')}"`
         ].join(",");
         csvContent += row + "\n";
@@ -5338,6 +5500,11 @@ function doPost(e) {
       const expFilterEquipSelect = document.getElementById('expenseFilterEquipment');
       const filterEquipSelect = document.getElementById('logFilterEquipment');
 
+      // Urutkan daftar unit dari A ke Z berdasarkan kode unit / nama unit
+      const sortedEquipments = equipments.slice().sort((a, b) => {
+        return (a.code || '').localeCompare(b.code || '', undefined, { numeric: true, sensitivity: 'base' });
+      });
+
       const selects = [
         { el: logSelect, defaultText: 'Pilih Unit Alat...' },
         { el: fuelSelect, defaultText: 'Pilih Unit Alat...' },
@@ -5350,7 +5517,7 @@ function doPost(e) {
         if (!el) return;
         const currentVal = el.value;
         el.innerHTML = `<option value="" disabled ${!currentVal ? 'selected' : ''}>${defaultText}</option>`;
-        equipments.forEach(eq => {
+        sortedEquipments.forEach(eq => {
           const opt = document.createElement('option');
           opt.value = eq.id;
           opt.textContent = `${eq.code} (${eq.category} - ${eq.model}) [HM: ${eq.currentHM}]`;
@@ -5362,7 +5529,7 @@ function doPost(e) {
       if (fuelFilterEquip) {
         const cur = fuelFilterEquip.value || 'ALL';
         fuelFilterEquip.innerHTML = '<option value="ALL">Semua Unit Alat</option>';
-        equipments.forEach(eq => {
+        sortedEquipments.forEach(eq => {
           const opt = document.createElement('option');
           opt.value = eq.id;
           opt.textContent = `${eq.code} - ${eq.model}`;
@@ -5374,7 +5541,7 @@ function doPost(e) {
       if (expFilterEquipSelect) {
         const curExpFilter = expFilterEquipSelect.value || 'ALL';
         expFilterEquipSelect.innerHTML = '<option value="ALL">Semua Unit Alat</option>';
-        equipments.forEach(eq => {
+        sortedEquipments.forEach(eq => {
           const opt = document.createElement('option');
           opt.value = eq.id;
           opt.textContent = `${eq.code} - ${eq.model}`;
@@ -5386,7 +5553,7 @@ function doPost(e) {
       if (filterEquipSelect) {
         const curFilter = filterEquipSelect.value || 'ALL';
         filterEquipSelect.innerHTML = '<option value="ALL">Semua Unit Alat</option>';
-        equipments.forEach(eq => {
+        sortedEquipments.forEach(eq => {
           const opt = document.createElement('option');
           opt.value = eq.id;
           opt.textContent = `${eq.code} - ${eq.model}`;
@@ -5426,8 +5593,12 @@ function doPost(e) {
 
       const currentEquip = equipSelect.value || 'ALL';
 
+      const sortedEquipments = equipments.slice().sort((a, b) => 
+        (a.code || '').localeCompare(b.code || '', undefined, { numeric: true, sensitivity: 'base' })
+      );
+
       equipSelect.innerHTML = '<option value="ALL">Semua Unit Alat</option>';
-      equipments.forEach(eq => {
+      sortedEquipments.forEach(eq => {
         const opt = document.createElement('option');
         opt.value = eq.id;
         opt.textContent = `${eq.code} (${eq.category} - ${eq.model})`;
@@ -5694,8 +5865,12 @@ function doPost(e) {
     }
 
     function calculateTotalAttachmentHours() {
-      const bkt = parseFloat(document.getElementById('logBucketHours')?.value) || 0;
-      const brk = parseFloat(document.getElementById('logBreakerHours')?.value) || 0;
+      const bktInput = document.getElementById('logBucketHours');
+      const brkInput = document.getElementById('logBreakerHours');
+      
+      const bkt = bktInput && bktInput.value !== '' ? parseFloat(bktInput.value) || 0 : 0;
+      const brk = brkInput && brkInput.value !== '' ? parseFloat(brkInput.value) || 0 : 0;
+      
       const total = (bkt + brk).toFixed(1);
       const display = document.getElementById('logTotalAttachmentHoursDisplay');
       if (display) display.innerText = total;
@@ -5709,8 +5884,10 @@ function doPost(e) {
       const warning = document.getElementById('hmWarningMsg');
       const display = document.getElementById('logTotalHmDisplay');
 
-      const bkt = parseFloat(document.getElementById('logBucketHours')?.value) || 0;
-      const brk = parseFloat(document.getElementById('logBreakerHours')?.value) || 0;
+      const bktInput = document.getElementById('logBucketHours');
+      const brkInput = document.getElementById('logBreakerHours');
+      const bkt = bktInput && bktInput.value !== '' ? parseFloat(bktInput.value) || 0 : 0;
+      const brk = brkInput && brkInput.value !== '' ? parseFloat(brkInput.value) || 0 : 0;
       const totalJamAttachment = bkt + brk;
 
       let akhir;
@@ -5796,13 +5973,16 @@ function doPost(e) {
     }
 
     /* Helper Unggah Foto ke Google Drive Melalui Google Apps Script Web App */
-    async function uploadImageToGoogleDrive(base64Data, filename, unitCode) {
+    async function uploadImageToGoogleDrive(base64Data, prefix = 'HM', unitCode = 'UNIT', folderName = 'DOKUMENTASI_HM_PIT_RENTAL') {
       if (!googleSheetsUrl || !base64Data) return '';
       try {
+        const cleanPrefix = (prefix || 'FOTO').replace(/[^a-zA-Z0-9_-]/g, '_');
+        const cleanUnit = (unitCode || 'UNIT').replace(/[^a-zA-Z0-9_-]/g, '_');
         const payload = {
           action: 'uploadImage',
           isPhotoUploadOnly: true,
-          fileName: `HM_${unitCode.replace(/[^a-zA-Z0-9_-]/g, '_')}_${Date.now()}`,
+          folderName: folderName,
+          fileName: `${cleanPrefix}_${cleanUnit}_${Date.now()}`,
           imageBlobBase64: base64Data,
           imageMimeType: 'image/jpeg'
         };
@@ -5886,6 +6066,17 @@ function doPost(e) {
       const saveBtnText = document.getElementById('saveLogBtnText');
       const notice = document.getElementById('uploadStatusNotice');
 
+      // Siapkan tab baru lebih awal (sinkron saat tombol diklik) agar browser tidak memblokir popup WhatsApp setelah proses async upload selesai
+      let preOpenedWaWin = null;
+      if (whatsappFeatureEnabled && currentUploadedImageData) {
+        try {
+          preOpenedWaWin = window.open('about:blank', '_blank');
+          if (preOpenedWaWin && preOpenedWaWin.document) {
+            preOpenedWaWin.document.write('<title>Menyiapkan Laporan WhatsApp...</title><body style="background:#0f172a;color:#f8fafc;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;"><h3>Mengunggah foto & menyiapkan pesan WhatsApp...</h3><p style="color:#94a3b8;font-size:13px;">Mohon tunggu sebentar, Anda akan diarahkan otomatis ke WhatsApp.</p></div></body>');
+          }
+        } catch (e) {}
+      }
+
       let googleDrivePhotoUrl = '';
 
       // JIKA ADA FOTO: Upload langsung ke Google Drive agar storage Firestore TIDAK PENUH
@@ -5953,12 +6144,13 @@ function doPost(e) {
         'success'
       );
 
-      if (googleSheetsUrl) {
-        sendLogToGoogleSheets(newLog.id);
+      // Langsung buka tab pengiriman WhatsApp tanpa setTimeout agar tidak diblokir browser
+      if (whatsappFeatureEnabled) {
+        sendLogToWhatsApp(newLog.id, preOpenedWaWin);
       }
 
-      if (whatsappFeatureEnabled) {
-        setTimeout(() => { sendLogToWhatsApp(newLog.id); }, 500);
+      if (googleSheetsUrl) {
+        sendLogToGoogleSheets(newLog.id);
       }
 
       resetLogForm();
@@ -6848,6 +7040,7 @@ function doPost(e) {
       dailyLogs = dailyLogs.filter(l => l.id !== id);
       saveAllToStorage();
       cloudDeleteDocument('daily_logs', id);
+      
       renderDailyLogsTable();
       renderDashboardRecentLogs();
       updateDashboardKPIs();
@@ -7146,7 +7339,11 @@ function doPost(e) {
         return;
       }
 
-      equipments.forEach(eq => {
+      const sortedEquipments = equipments.slice().sort((a, b) => 
+        (a.code || '').localeCompare(b.code || '', undefined, { numeric: true, sensitivity: 'base' })
+      );
+
+      sortedEquipments.forEach(eq => {
         const div = document.createElement('div');
         div.className = 'py-3 flex items-center justify-between text-xs hover:bg-slate-800/40 px-2 rounded-xl transition';
         div.innerHTML = `
@@ -7780,21 +7977,18 @@ function doPost(e) {
                   <div class="text-xs font-bold text-white">${t.name}</div>
                   <div class="text-[11px] font-mono text-amber-400">${t.plateNumber}</div>
                 </div>
-                <span class="text-[10px] px-2 py-0.5 rounded font-bold border ${t.status === 'Aktif' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-slate-800 text-slate-400 border-slate-700'}">${t.status}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${t.status === 'Aktif' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'}">${t.status}</span>
               </div>
-              <div class="text-xs text-slate-300 bg-slate-950 p-2.5 rounded-lg space-y-1">
-                <div>Tipe: <strong class="text-white">${t.model}</strong></div>
-                <div>Supir: <strong class="text-white">${t.defaultDriver}</strong> (${t.phone || '-'})</div>
+              <div class="text-xs text-slate-300">
+                Model: <strong>${t.model}</strong><br>
+                Supir: <strong>${t.defaultDriver}</strong> (${t.phone || '-'})
               </div>
-              <div class="flex justify-end items-center gap-2 pt-1">
-                ${currentUser && currentUser.role === 'admin' ? `
-                  <button type="button" onclick="editTruck('${t.id}')" class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold">
-                    <i class="fa-solid fa-pen-to-square"></i> Edit
-                  </button>
-                  <span class="text-slate-700">|</span>
-                  <button type="button" onclick="deleteTruck('${t.id}')" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold">
-                    <i class="fa-solid fa-trash-can"></i> Hapus
-                  </button>
+              <div class="flex justify-end pt-1">
+                ${(currentUser && currentUser.role === 'admin') ? `
+                  <div class="flex gap-2">
+                    <button type="button" onclick="editTruck('${t.id}')" class="text-xs text-amber-400 hover:text-amber-300">Edit</button>
+                    <button type="button" onclick="deleteTruck('${t.id}')" class="text-xs text-rose-400 hover:text-rose-300">Hapus</button>
+                  </div>
                 ` : ''}
               </div>
             `;
@@ -7802,6 +7996,31 @@ function doPost(e) {
           });
         }
       }
+    }
+
+    function deleteEquipmentExpense(id) {
+      if (currentUser && currentUser.role !== 'admin') {
+        showToast('Hanya Supervisor / Admin yang dapat menghapus data pengeluaran.', 'warning');
+        return;
+      }
+      equipmentExpenses = equipmentExpenses.filter(e => e.id !== id);
+      saveAllToStorage();
+      cloudDeleteDocument('equipment_expenses', id);
+      updateDashboardKPIs();
+      renderExpensesTable();
+      showToast('Data pengeluaran berhasil dihapus.', 'info');
+    }
+
+    function deleteTruckShipment(id) {
+      if (!currentUser || currentUser.role !== 'admin') {
+        showToast('Akses ditolak: Hanya Supervisor / Admin yang berhak menghapus data kiriman truk!', 'warning');
+        return;
+      }
+      truckShipments = truckShipments.filter(s => s.id !== id);
+      saveAllToStorage();
+      cloudDeleteDocument('truck_shipments', id);
+      renderTruckShipmentsTable();
+      showToast('Data kiriman truk berhasil dihapus.', 'info');
     }
 
     function deleteTruck(id) {
