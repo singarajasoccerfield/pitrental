@@ -2749,6 +2749,42 @@
           </ol>
 
           <pre id="appsScriptSnippet" class="bg-slate-900 border border-slate-800 p-3 rounded-lg text-[11px] text-slate-300 font-mono overflow-x-auto max-h-48 select-all">
+// ================= KONFIGURASI RAHASIA (TERSEMBUNYI DARI HTML) =================
+function getSecretAppConfig() {
+  return {
+    firebaseConfig: {
+      apiKey: "ISI_API_KEY_FIREBASE_DI_SINI",
+      authDomain: "pitrental-47940.firebaseapp.com",
+      projectId: "pitrental-47940",
+      storageBucket: "pitrental-47940.firebasestorage.app",
+      messagingSenderId: "204512787860",
+      appId: "1:204512787860:web:ece7f89e8ff2b5aadf2381",
+      measurementId: "G-13QXWL4ZNG"
+    },
+    whatsappTargetNumber: "6287762224890",
+    whatsappFeatureEnabled: true
+  };
+}
+
+// 1. HANDLER GET: Mengirim konfigurasi API ke aplikasi saat user login di device baru
+function doGet(e) {
+  var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "getConfig";
+  
+  if (action === "getConfig") {
+    var secret = getSecretAppConfig();
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "success",
+      config: secret
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+  
+  return ContentService.createTextOutput(JSON.stringify({
+    status: "online",
+    message: "Pit Rental Backend API is active."
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+// 2. HANDLER POST: Menyimpan Log ke Sheet, Upload Foto ke Drive & Ambil Config
 function doPost(e) {
   var lock = LockService.getScriptLock();
   lock.tryLock(30000);
@@ -2766,6 +2802,14 @@ function doPost(e) {
       }
     } else if (e && e.parameter) {
       data = e.parameter;
+    }
+
+    // A. Jika aplikasi meminta konfigurasi API via POST (saat login)
+    if (data.action === "getConfig") {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "success",
+        config: getSecretAppConfig()
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // 2. Handler Khusus: Upload Foto Langsung ke Google Drive
@@ -2848,7 +2892,7 @@ function doPost(e) {
     }
 
     // 6. Jika ada foto disertakan bersama log dan belum diupload terpisah
-    var finalPhotoUrl = data.photoUrl || "";
+    var finalPhotoUrl = data.photoUrl || data.photoDriveUrl || "";
     if (!finalPhotoUrl && data.imageData && data.imageData.startsWith("data:image")) {
       try {
         var folderName2 = "DOKUMENTASI_HM_PIT_RENTAL";
@@ -3352,7 +3396,8 @@ function doPost(e) {
     let serviceActionHistory = [];
     let equipmentExpenses = [];
     let serviceChecklistItems = [];
-    const DEFAULT_STATIC_GSHEETS_URL = "https://script.google.com/macros/s/AKfycbwq1uV92-1fJ0JXonTxN1m8xG9yGVAfS7LF-JXUi6NLkprS8H66CFkttjS5Mx-kdJCW/exec";
+    const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwq1uV92-1fJ0JXonTxN1m8xG9yGVAfS7LF-JXUi6NLkprS8H66CFkttjS5Mx-kdJCW/exec";
+    const DEFAULT_STATIC_GSHEETS_URL = GAS_WEB_APP_URL;
     let googleSheetsUrl = DEFAULT_STATIC_GSHEETS_URL;
     let currentUploadedImageData = '';
     let currentUploadedFuelImageData = '';
@@ -3372,34 +3417,98 @@ function doPost(e) {
       { name: 'Ganti Filter Udara (Air Cleaner)', desc: 'Air Cleaner Inner & Outer' }
     ];
 
-    // Cloud Database
+    // Cloud Database (API Tersembunyi & Ditarik Otomatis dari Google Apps Script)
     let db = null;
     let auth = null;
     let isCloudDbConnected = false;
+    let firebaseAppInstance = null;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'heavy-equipment-pit-rental';
 
-    const DEFAULT_STATIC_FIREBASE_CONFIG = {
-      apiKey: "AIzaSyBAtK5M1mfeEsFgAb7DigtsNfKd_mYERv4",
-      authDomain: "pitrental-47940.firebaseapp.com",
-      projectId: "pitrental-47940",
-      storageBucket: "pitrental-47940.firebasestorage.app",
-      messagingSenderId: "204512787860",
-      appId: "1:204512787860:web:ece7f89e8ff2b5aadf2381",
-      measurementId: "G-13QXWL4ZNG"
-    };
+    // Konfigurasi Firebase disembunyikan dari kode HTML dan diambil otomatis dari Google Apps Script
+    const DEFAULT_STATIC_FIREBASE_CONFIG = null;
+    let remoteFirebaseConfigCache = null;
+
+    async function fetchRemoteConfigFromGAS() {
+      const cachedSessionCfg = sessionStorage.getItem('__pit_remote_fb_cfg');
+      if (cachedSessionCfg) {
+        try {
+          remoteFirebaseConfigCache = JSON.parse(cachedSessionCfg);
+          return remoteFirebaseConfigCache;
+        } catch (e) {}
+      }
+
+      const targetUrl = (googleSheetsUrl && googleSheetsUrl.trim() !== '') ? googleSheetsUrl : GAS_WEB_APP_URL;
+
+      // 1. Coba ambil via GET (?action=getConfig)
+      try {
+        const response = await fetch(`${targetUrl}?action=getConfig`, {
+          method: 'GET',
+          redirect: 'follow'
+        });
+        if (response.ok) {
+          const result = await response.json();
+          if (result && result.status === 'success' && result.config) {
+            return applyRemoteConfigResult(result.config, targetUrl);
+          }
+        }
+      } catch (errGet) {
+        console.warn("GET getConfig gagal, mencoba fallback POST:", errGet);
+      }
+
+      // 2. Fallback: Coba ambil via POST (action: "getConfig")
+      try {
+        const responsePost = await fetch(targetUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'getConfig' })
+        });
+        if (responsePost.ok) {
+          const resultPost = await responsePost.json();
+          if (resultPost && resultPost.status === 'success' && resultPost.config) {
+            return applyRemoteConfigResult(resultPost.config, targetUrl);
+          }
+        }
+      } catch (errPost) {
+        console.warn("POST getConfig gagal:", errPost);
+      }
+
+      return null;
+    }
+
+    function applyRemoteConfigResult(cfgObj, targetUrl) {
+      if (cfgObj.firebaseConfig && cfgObj.firebaseConfig.apiKey) {
+        remoteFirebaseConfigCache = cfgObj.firebaseConfig;
+        sessionStorage.setItem('__pit_remote_fb_cfg', JSON.stringify(remoteFirebaseConfigCache));
+        localStorage.removeItem('heavy_firebase_manual_config');
+      }
+      if (cfgObj.whatsappTargetNumber) {
+        whatsappTargetNumber = cfgObj.whatsappTargetNumber;
+        localStorage.setItem('heavy_wa_target_number', whatsappTargetNumber);
+      }
+      if (typeof cfgObj.whatsappFeatureEnabled === 'boolean') {
+        whatsappFeatureEnabled = cfgObj.whatsappFeatureEnabled;
+        localStorage.setItem('heavy_wa_enabled', whatsappFeatureEnabled.toString());
+      }
+      googleSheetsUrl = targetUrl;
+      localStorage.setItem('heavy_gsheets_url', googleSheetsUrl);
+      updateGSheetsStatusUI();
+      updateWhatsAppStatusUI();
+      return remoteFirebaseConfigCache;
+    }
 
     window.initCloudDatabase = async function() {
       verifyAndActivateLocalDatabase();
       if (!window.__fb_sdk) return;
+      if (isCloudDbConnected && db) return;
       try {
         const { initializeApp, getAuth, signInAnonymously, signInWithCustomToken, getFirestore } = window.__fb_sdk;
-        let config = null;
-        const manualCfg = localStorage.getItem('heavy_firebase_manual_config');
-        if (manualCfg) {
-          try { config = typeof manualCfg === 'string' ? JSON.parse(manualCfg) : manualCfg; } catch(e){}
-        }
-        if (!config && DEFAULT_STATIC_FIREBASE_CONFIG && DEFAULT_STATIC_FIREBASE_CONFIG.apiKey) {
-          config = DEFAULT_STATIC_FIREBASE_CONFIG;
+        let config = remoteFirebaseConfigCache || await fetchRemoteConfigFromGAS();
+
+        if (!config) {
+          const manualCfg = localStorage.getItem('heavy_firebase_manual_config');
+          if (manualCfg) {
+            try { config = typeof manualCfg === 'string' ? JSON.parse(manualCfg) : manualCfg; } catch(e){}
+          }
         }
         if (!config && typeof __firebase_config !== 'undefined' && __firebase_config) {
           config = typeof __firebase_config === 'string' ? JSON.parse(__firebase_config) : __firebase_config;
@@ -3410,9 +3519,11 @@ function doPost(e) {
           return;
         }
 
-        const app = initializeApp(config);
-        auth = getAuth(app);
-        db = getFirestore(app);
+        if (!firebaseAppInstance) {
+          firebaseAppInstance = initializeApp(config);
+        }
+        auth = getAuth(firebaseAppInstance);
+        db = getFirestore(firebaseAppInstance);
 
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
           await signInWithCustomToken(auth, __initial_auth_token);
@@ -4116,38 +4227,67 @@ function doPost(e) {
       localStorage.setItem('heavy_wa_enabled', whatsappFeatureEnabled.toString());
     }
 
-    /* Auth & Role Access Control */
-    function handleLogin(e) {
+    /* Auth & Role Access Control (Auto-Connect API & Cloud DB saat Login di Device Baru) */
+    async function handleLogin(e) {
       e.preventDefault();
       const usernameInput = (document.getElementById('usernameInput')?.value || '').trim();
       const passwordInput = (document.getElementById('passwordInput')?.value || '').trim();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
 
-      const matchedUser = appUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
-
-      if (!matchedUser) {
-        showToast('Username tidak ditemukan di sistem!', 'warning');
-        return;
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Menghubungkan Server & Verifikasi...';
       }
-
-      if (matchedUser.password !== passwordInput) {
-        showToast('Kata sandi yang dimasukkan salah!', 'warning');
-        return;
-      }
-
-      currentUser = {
-        id: matchedUser.id,
-        username: matchedUser.username,
-        name: matchedUser.name || matchedUser.username,
-        role: matchedUser.role || 'operator'
-      };
 
       try {
-        localStorage.setItem('heavy_user_session', JSON.stringify(currentUser));
-      } catch (err) {
-        console.error("Gagal menyimpan sesi login:", err);
+        // 1. Otomatis tarik konfigurasi API dari Google Script & aktifkan Cloud DB di device ini
+        if (!isCloudDbConnected) {
+          await window.initCloudDatabase();
+          // Beri waktu singkat agar listener akun pengguna dari Cloud DB sempat tersinkron
+          await new Promise(resolve => setTimeout(resolve, 600));
+        }
+
+        // 2. Cocokkan username dan password dari daftar akun terbaru
+        const matchedUser = appUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
+
+        if (!matchedUser) {
+          showToast('Username tidak ditemukan di sistem!', 'warning');
+          return;
+        }
+
+        if (matchedUser.password !== passwordInput) {
+          showToast('Kata sandi yang dimasukkan salah!', 'warning');
+          return;
+        }
+
+        currentUser = {
+          id: matchedUser.id,
+          username: matchedUser.username,
+          name: matchedUser.name || matchedUser.username,
+          role: matchedUser.role || 'operator'
+        };
+
+        try {
+          localStorage.setItem('heavy_user_session', JSON.stringify(currentUser));
+          localStorage.setItem('heavy_gsheets_url', GAS_WEB_APP_URL);
+          googleSheetsUrl = GAS_WEB_APP_URL;
+        } catch (err) {
+          console.error("Gagal menyimpan sesi login:", err);
+        }
+
+        updateGSheetsStatusUI();
+        updateWhatsAppStatusUI();
+        updateDbIndicatorUI(isCloudDbConnected ? 'cloud' : 'local');
+
+        showToast(`Login berhasil (${currentUser.role.toUpperCase()}): ${currentUser.name}. Koneksi Cloud & API Aktif Otomatis!`, 'success');
+        renderAppView();
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
       }
-      showToast(`Login berhasil sebagai ${currentUser.role.toUpperCase()}: ${currentUser.name}`, 'success');
-      renderAppView();
     }
 
     function checkAuthSession() {
@@ -7134,17 +7274,23 @@ function doPost(e) {
       if (countHist) countHist.innerText = serviceActionHistory.length;
 
       if (manualInput) {
-        const savedCfg = localStorage.getItem('heavy_firebase_manual_config');
-        if (savedCfg) {
-          try {
-            manualInput.value = JSON.stringify(JSON.parse(savedCfg), null, 2);
-          } catch(e) {
-            manualInput.value = savedCfg;
-          }
-        } else if (DEFAULT_STATIC_FIREBASE_CONFIG && DEFAULT_STATIC_FIREBASE_CONFIG.apiKey) {
-          manualInput.value = JSON.stringify(DEFAULT_STATIC_FIREBASE_CONFIG, null, 2);
+        if (isCloudDbConnected && remoteFirebaseConfigCache) {
+          manualInput.value = '/* TERHUBUNG OTOMATIS VIA GOOGLE APPS SCRIPT (API TERSEMBUNYI & AMAN) */';
+          manualInput.readOnly = true;
+          manualInput.classList.add('text-emerald-400', 'cursor-not-allowed');
         } else {
-          manualInput.value = '';
+          manualInput.readOnly = false;
+          manualInput.classList.remove('text-emerald-400', 'cursor-not-allowed');
+          const savedCfg = localStorage.getItem('heavy_firebase_manual_config');
+          if (savedCfg) {
+            try {
+              manualInput.value = JSON.stringify(JSON.parse(savedCfg), null, 2);
+            } catch(e) {
+              manualInput.value = savedCfg;
+            }
+          } else {
+            manualInput.value = '';
+          }
         }
       }
 
