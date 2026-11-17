@@ -51,7 +51,7 @@
               100: '#fef3c7',
               200: '#fde68a',
               400: '#fbbf24',
-              500: '#f59e0b', // Safety Yellow / Amber
+              500: '#f59e0b',
               600: '#d97706',
               700: '#b45309',
             },
@@ -166,12 +166,15 @@
         color: #000000 !important;
       }
 
-      /* Mode Cetak Log Operasional */
+      /* Mode Cetak Log Operasional (Kalender Box) */
       body.printing-logs #mainAppView > header,
       body.printing-logs #mainAppView > nav,
       body.printing-logs #tab-dashboard,
       body.printing-logs #tab-operatorDashboard,
       body.printing-logs #tab-helperDashboard,
+      body.printing-logs #tab-kasirDashboard,
+      body.printing-logs #tab-truckMaster,
+      body.printing-logs #tab-truckShipments,
       body.printing-logs #tab-inputLog,
       body.printing-logs #tab-fuelLog,
       body.printing-logs #tab-serviceLog,
@@ -194,20 +197,29 @@
         position: static !important;
         background-color: #ffffff !important;
         color: #000000 !important;
-      }
-
-      body.printing-logs #printableArea table {
-        color: #000000 !important;
-      }
-
-      body.printing-logs #printableArea th,
-      body.printing-logs #printableArea td {
-        color: #000000 !important;
-        border-color: #cbd5e1 !important;
+        border: 1px solid #cbd5e1 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
 
       body.printing-logs #printableArea * {
         visibility: visible !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body.printing-logs #dailyLogsBoxContainer > div {
+        background-color: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        page-break-inside: avoid;
+      }
+
+      body.printing-logs #dailyLogsBoxContainer h4 {
+        color: #0f172a !important;
+      }
+
+      body.printing-logs #dailyLogsBoxContainer button {
+        display: flex !important;
       }
 
       @page {
@@ -222,7 +234,6 @@
   <!-- ================= AUTH VIEW (LOGIN SCREEN) ================= -->
   <div id="authView" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800">
     <div class="w-full max-w-md bg-slate-800/90 backdrop-blur-md border border-slate-700/80 rounded-2xl shadow-2xl p-6 sm:p-8 relative overflow-hidden">
-      <!-- Glow Decor -->
       <div class="absolute -top-12 -right-12 w-32 h-32 bg-amber-500/20 rounded-full blur-2xl pointer-events-none"></div>
       <div class="absolute -bottom-10 -left-10 w-28 h-28 bg-amber-600/10 rounded-full blur-xl pointer-events-none"></div>
 
@@ -253,7 +264,7 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-500">
               <i class="fa-solid fa-lock"></i>
             </span>
-            <input type="password" id="passwordInput" required placeholder="Masukkan kata sandi" autocomplete="current-password" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-amber-500 focus:border-amber-500 transition">
+            <input type="password" id="passwordInput" required placeholder="Masukkan kata sandi" autocomplete="current-password" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl py-2.5 pl-10 pr-4 text-sm text-white focus:outline-none focus:border-amber-500 transition">
           </div>
         </div>
 
@@ -286,7 +297,6 @@
         
         <!-- Sisi Kiri: Tombol Hamburger Mobile & Logo -->
         <div class="flex items-center gap-2.5">
-          <!-- Tombol Hamburger Menu Khusus Layar HP (Geser Kiri) -->
           <button type="button" onclick="toggleMobileSidebar(true)" id="mobileMenuToggleBtn" class="md:hidden h-10 w-10 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 flex items-center justify-center transition shadow-sm active:scale-95" title="Buka Menu">
             <i class="fa-solid fa-bars text-lg"></i>
           </button>
@@ -302,74 +312,63 @@
           </div>
         </div>
 
-        <!-- Navigation Tabs (Desktop) Responsif dengan scroll horizontal halus -->
+        <!-- Navigation Tabs (Desktop) -->
         <div class="hidden md:flex flex-1 items-center justify-center px-4 overflow-hidden">
           <div id="desktopNavTabsWrapper" class="flex items-center space-x-1 bg-slate-950/60 p-1 rounded-xl border border-slate-800 overflow-x-auto max-w-full whitespace-nowrap scrollbar-none py-1">
-          <!-- Tab Dashboard Admin -->
-          <button onclick="switchTab('dashboard')" id="navTabDashboard" class="role-nav-admin tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5">
-            <i class="fa-solid fa-chart-pie"></i> Dashboard Admin
-          </button>
-          <!-- Tab Dashboard Operator -->
-          <button onclick="switchTab('operatorDashboard')" id="navTabOperatorDashboard" class="role-nav-operator tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5 hidden">
-            <i class="fa-solid fa-gauge-high"></i> Dashboard Operator
-          </button>
-          <!-- Tab Dashboard Helper -->
-          <button onclick="switchTab('helperDashboard')" id="navTabHelperDashboard" class="role-nav-helper tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5 hidden">
-            <i class="fa-solid fa-gas-pump"></i> Dashboard Helper
-          </button>
-          <!-- Tab Dashboard Kasir -->
-          <button onclick="switchTab('kasirDashboard')" id="navTabKasirDashboard" class="role-nav-kasir tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5 hidden">
-            <i class="fa-solid fa-cash-register"></i> Dashboard Kasir
-          </button>
-          <!-- Tab Data Truk (Master Armada Truk) -->
-          <button onclick="switchTab('truckMaster')" id="navTabTruckMaster" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-truck-moving text-amber-400"></i> Data Truk
-          </button>
-          <!-- Tab Data Kiriman Truk (Logistik & Surat Jalan) -->
-          <button onclick="switchTab('truckShipments')" id="navTabTruckShipments" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-truck-ramp-box text-sky-400"></i> Data Kiriman Truk
-          </button>
-          <!-- Tab Input HM (Admin, Operator, Kasir) -->
-          <button onclick="switchTab('inputLog')" id="navTabInputLog" class="role-nav-operator-input role-nav-admin role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-file-circle-plus"></i> Input HM
-          </button>
-          <!-- Tab Pengisian Solar (Admin, Helper, Kasir) -->
-          <button onclick="switchTab('fuelLog')" id="navTabFuelLog" class="role-nav-helper-input role-nav-admin role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-droplet text-amber-400"></i> Pengisian Solar
-          </button>
-          <!-- Tab Pengeluaran Unit (Admin & Kasir) -->
-          <button onclick="switchTab('expenseTab')" id="navTabExpenseTab" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-receipt text-rose-400"></i> Pengeluaran Unit
-          </button>
-          <!-- Tab Unit & Log (Admin & Kasir) -->
-          <button onclick="switchTab('equipmentList')" id="navTabEquipment" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-boxes-stacked"></i> Unit & Log
-          </button>
-          <!-- Tab Khusus Admin Saja -->
-          <button onclick="switchTab('serviceLog')" id="navTabServiceLog" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-oil-can text-amber-400"></i> Catat Servis
-          </button>
-          <button onclick="switchTab('maintenance')" id="navTabMaintenance" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-screwdriver-wrench"></i> Jadwal Servis
-          </button>
-          <button onclick="switchTab('invoice')" id="navTabInvoice" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
-            <i class="fa-solid fa-file-invoice-dollar text-amber-400"></i> Invoice
-          </button>
-          <button onclick="openWhatsAppConfigModal()" id="navTabWhatsApp" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30 transition flex items-center gap-1.5">
-            <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i> WA
-            <span id="waIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          </button>
-          <button onclick="openGoogleSheetsModal()" id="navTabGSheets" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30 transition flex items-center gap-1.5">
-            <i class="fa-solid fa-table-cells text-emerald-400"></i> G-Sheets
-            <span id="gsheetsIndicatorDot" class="w-2 h-2 rounded-full bg-slate-600"></span>
-          </button>
-          <button onclick="openDatabaseConfigModal()" id="cloudDbIndicator" class="role-admin-only flex-shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition flex items-center gap-1.5 cursor-pointer">
-            <i class="fa-solid fa-database text-xs"></i>
-            <span id="cloudDbStatusText" class="hidden lg:inline text-[11px]">Local DB</span>
-            <span id="cloudDbPulseDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-          </button>
+            <button onclick="switchTab('dashboard')" id="navTabDashboard" class="role-nav-admin tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5">
+              <i class="fa-solid fa-chart-pie"></i> Dashboard Admin
+            </button>
+            <button onclick="switchTab('operatorDashboard')" id="navTabOperatorDashboard" class="role-nav-operator tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5 hidden">
+              <i class="fa-solid fa-gauge-high"></i> Dashboard Operator
+            </button>
+            <button onclick="switchTab('helperDashboard')" id="navTabHelperDashboard" class="role-nav-helper tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5 hidden">
+              <i class="fa-solid fa-gas-pump"></i> Dashboard Helper
+            </button>
+            <button onclick="switchTab('kasirDashboard')" id="navTabKasirDashboard" class="role-nav-kasir tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-amber-500 text-slate-950 flex items-center gap-1.5 hidden">
+              <i class="fa-solid fa-cash-register"></i> Dashboard Kasir
+            </button>
+            <button onclick="switchTab('truckMaster')" id="navTabTruckMaster" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-truck-moving text-amber-400"></i> Data Truk
+            </button>
+            <button onclick="switchTab('truckShipments')" id="navTabTruckShipments" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-truck-ramp-box text-sky-400"></i> Data Kiriman Truk
+            </button>
+            <button onclick="switchTab('inputLog')" id="navTabInputLog" class="role-nav-operator-input role-nav-admin role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-file-circle-plus"></i> Input HM
+            </button>
+            <button onclick="switchTab('fuelLog')" id="navTabFuelLog" class="role-nav-helper-input role-nav-admin role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-droplet text-amber-400"></i> Pengisian Solar
+            </button>
+            <button onclick="switchTab('expenseTab')" id="navTabExpenseTab" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-receipt text-rose-400"></i> Pengeluaran Unit
+            </button>
+            <button onclick="switchTab('equipmentList')" id="navTabEquipment" class="role-admin-only role-nav-kasir-item tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-boxes-stacked"></i> Unit & Log
+            </button>
+            <button onclick="switchTab('serviceLog')" id="navTabServiceLog" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-oil-can text-amber-400"></i> Catat Servis
+            </button>
+            <button onclick="switchTab('maintenance')" id="navTabMaintenance" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-screwdriver-wrench"></i> Jadwal Servis
+            </button>
+            <button onclick="switchTab('invoice')" id="navTabInvoice" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-white transition flex items-center gap-1.5">
+              <i class="fa-solid fa-file-invoice-dollar text-amber-400"></i> Invoice
+            </button>
+            <button onclick="openWhatsAppConfigModal()" id="navTabWhatsApp" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30 transition flex items-center gap-1.5">
+              <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i> WA
+              <span id="waIndicatorDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </button>
+            <button onclick="openGoogleSheetsModal()" id="navTabGSheets" class="role-admin-only tab-btn flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold text-emerald-400 hover:bg-emerald-500/10 border border-emerald-500/30 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-table-cells text-emerald-400"></i> G-Sheets
+              <span id="gsheetsIndicatorDot" class="w-2 h-2 rounded-full bg-slate-600"></span>
+            </button>
+            <button onclick="openDatabaseConfigModal()" id="cloudDbIndicator" class="role-admin-only flex-shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-database text-xs"></i>
+              <span id="cloudDbStatusText" class="hidden lg:inline text-[11px]">Local DB</span>
+              <span id="cloudDbPulseDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            </button>
+          </div>
         </div>
-      </div>
 
         <!-- User Role Profile & Logout -->
         <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
@@ -378,7 +377,6 @@
             <div id="userRoleBadge" class="text-[10px] text-amber-400 font-medium">Administrator</div>
           </div>
           
-          <!-- Tombol Header Hanya untuk Admin -->
           <button onclick="openDatabaseConfigModal()" id="mobileDbBtnHeader" title="Status Database" class="role-admin-only md:hidden relative h-9 w-9 rounded-xl bg-slate-800 text-emerald-400 border border-emerald-500/30 flex items-center justify-center transition">
             <i class="fa-solid fa-database text-sm"></i>
             <span id="mobileDbPulseDot" class="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900 animate-pulse"></span>
@@ -393,8 +391,6 @@
           <button onclick="openManageUsersModal()" id="btnManageUsersHeader" title="Kelola Akun & Kata Sandi" class="role-admin-only h-9 w-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 border border-slate-700 flex items-center justify-center transition">
             <i class="fa-solid fa-user-gear text-sm"></i>
           </button>
-
-          <!-- Ganti Peran (Hanya Admin) & Logout -->
           <button onclick="showSwitchRoleModal()" id="btnSwitchRoleHeader" title="Ubah Peran Pengguna (Admin Saja)" class="role-admin-only h-9 w-9 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-amber-400 border border-slate-700 flex items-center justify-center transition">
             <i class="fa-solid fa-users-gear text-sm"></i>
           </button>
@@ -406,11 +402,9 @@
       </div>
     </header>
 
-    <!-- ================= SIDEBAR MENU GESER KIRI (MOBILE DRAWER DI LUAR HEADER) ================= -->
+    <!-- ================= SIDEBAR MENU GESER KIRI (MOBILE DRAWER) ================= -->
     <div id="mobileSidebarOverlay" onclick="toggleMobileSidebar(false)" class="hidden fixed inset-0 z-[999] bg-black/80 backdrop-blur-sm md:hidden">
       <div id="mobileSidebarDrawer" onclick="event.stopPropagation()" class="w-72 max-w-[85vw] h-full bg-slate-900 border-r border-slate-800 flex flex-col justify-between shadow-2xl relative">
-        
-        <!-- Header Sidebar Mobile -->
         <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
           <div class="flex items-center gap-2.5">
             <div class="h-9 w-9 rounded-xl bg-amber-500 text-slate-950 flex items-center justify-center font-black text-sm">
@@ -426,12 +420,8 @@
           </button>
         </div>
 
-        <!-- Kontainer Menu Navigasi (Dirender Otomatis via JS) -->
-        <div id="mobileMenuListContainer" class="flex-1 overflow-y-auto p-3 space-y-1 text-xs">
-          <!-- Item menu akan diisi otomatis & pasti tampil oleh renderMobileMenuItems() -->
-        </div>
+        <div id="mobileMenuListContainer" class="flex-1 overflow-y-auto p-3 space-y-1 text-xs"></div>
 
-        <!-- Footer Sidebar Mobile -->
         <div class="p-3 border-t border-slate-800 bg-slate-950 space-y-2">
           <button type="button" onclick="handleLogout()" class="w-full py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-xl font-bold flex items-center justify-center gap-2 transition text-xs">
             <i class="fa-solid fa-arrow-right-from-bracket"></i>
@@ -446,8 +436,6 @@
       
       <!-- ================= TAB: DASHBOARD (ADMIN ONLY) ================= -->
       <section id="tab-dashboard" class="tab-content space-y-6">
-        
-        <!-- Welcome Banner -->
         <div class="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -491,10 +479,8 @@
           </div>
         </div>
 
-        <!-- KPI Metrics Grid (Now 5 items including Solar) -->
+        <!-- KPI Metrics Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          
-          <!-- Card 1: Bucket Hours -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Jam Bucket</span>
@@ -512,7 +498,6 @@
             </div>
           </div>
 
-          <!-- Card 2: Breaker Hours -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Jam Breaker</span>
@@ -530,7 +515,6 @@
             </div>
           </div>
 
-          <!-- Card 3: Total Pengisian Solar (BARU) -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Solar</span>
@@ -547,7 +531,6 @@
             </div>
           </div>
 
-          <!-- Card 4: Total Pengeluaran Unit -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Pengeluaran</span>
@@ -563,7 +546,6 @@
             </div>
           </div>
 
-          <!-- Card 5: Total Laporan Log -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-slate-700 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Log</span>
@@ -580,7 +562,6 @@
               <span id="kpiLogsPeriodLabel">Periode: Bulan Berjalan</span>
             </div>
           </div>
-
         </div>
 
         <!-- Leaderboard Unit Terproduktif -->
@@ -602,9 +583,7 @@
             </span>
           </div>
 
-          <div id="equipmentLeaderboardList" class="space-y-3">
-            <!-- Rendered by JS -->
-          </div>
+          <div id="equipmentLeaderboardList" class="space-y-3"></div>
         </div>
 
         <!-- Quick Status & Recent Activity -->
@@ -615,7 +594,7 @@
                 <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Log Operasional Terbaru
               </h3>
               <button onclick="switchTab('equipmentList')" class="text-xs text-amber-400 hover:text-amber-300 transition">
-                Lihat Semua &rarr;
+                Lihat Kalender Box &rarr;
               </button>
             </div>
             <div id="dashboardRecentLogsMobile" class="md:hidden space-y-3"></div>
@@ -656,12 +635,10 @@
             </div>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: DASHBOARD KHUSUS OPERATOR (BARU) ================= -->
+      <!-- ================= TAB: DASHBOARD KHUSUS OPERATOR ================= -->
       <section id="tab-operatorDashboard" class="tab-content hidden space-y-6">
-        <!-- Welcome Banner Operator -->
         <div class="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -680,9 +657,7 @@
           <i class="fa-solid fa-gauge-high absolute -bottom-6 -right-6 text-slate-800/30 text-9xl pointer-events-none select-none"></i>
         </div>
 
-        <!-- KPI Kartu Operator: Jumlah Jam Kerja yang Telah Diinput -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Total Jam Kerja Operator -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Jam Kerja</span>
@@ -699,7 +674,6 @@
             </div>
           </div>
 
-          <!-- Total Jam Bucket -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Jam Bucket</span>
@@ -716,7 +690,6 @@
             </div>
           </div>
 
-          <!-- Total Jam Breaker -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Jam Breaker</span>
@@ -733,7 +706,6 @@
             </div>
           </div>
 
-          <!-- Total Log / Shift yang Diinput -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Log Diinput</span>
@@ -751,7 +723,6 @@
           </div>
         </div>
 
-        <!-- Riwayat Log Yang Diinput Oleh Operator -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
           <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
             <div>
@@ -787,9 +758,8 @@
         </div>
       </section>
 
-      <!-- ================= TAB: DASHBOARD KHUSUS HELPER (BARU) ================= -->
+      <!-- ================= TAB: DASHBOARD KHUSUS HELPER ================= -->
       <section id="tab-helperDashboard" class="tab-content hidden space-y-6">
-        <!-- Welcome Banner Helper -->
         <div class="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -808,9 +778,7 @@
           <i class="fa-solid fa-gas-pump absolute -bottom-6 -right-6 text-slate-800/30 text-9xl pointer-events-none select-none"></i>
         </div>
 
-        <!-- KPI Kartu Helper: Jumlah Total Solar Diisi -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Total Liter Solar -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Solar Diisi</span>
@@ -827,7 +795,6 @@
             </div>
           </div>
 
-          <!-- Total Transaksi / Pengisian -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Frekuensi Pengisian</span>
@@ -844,7 +811,6 @@
             </div>
           </div>
 
-          <!-- Rata-rata Liter per Pengisian -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Rata-rata per Unit</span>
@@ -861,7 +827,6 @@
             </div>
           </div>
 
-          <!-- Unit Terbanyak Disuplai -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Unit Terbanyak</span>
@@ -878,7 +843,6 @@
           </div>
         </div>
 
-        <!-- Riwayat Pengisian Solar Terakhir oleh Helper -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
           <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
             <div>
@@ -914,9 +878,8 @@
         </div>
       </section>
 
-      <!-- ================= TAB: DASHBOARD KHUSUS KASIR (BARU) ================= -->
+      <!-- ================= TAB: DASHBOARD KHUSUS KASIR ================= -->
       <section id="tab-kasirDashboard" class="tab-content hidden space-y-6">
-        <!-- Welcome Banner Kasir -->
         <div class="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <div class="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -941,9 +904,7 @@
           <i class="fa-solid fa-coins absolute -bottom-6 -right-6 text-slate-800/30 text-9xl pointer-events-none select-none"></i>
         </div>
 
-        <!-- KPI Kartu Kasir -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Total Jam HM Operasional -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Jam Kerja (HM)</span>
@@ -960,7 +921,6 @@
             </div>
           </div>
 
-          <!-- Total Pengisian Solar (Liter) -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-amber-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Suplai Solar</span>
@@ -977,7 +937,6 @@
             </div>
           </div>
 
-          <!-- Total Pengeluaran Unit (Nominal) -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-rose-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Pengeluaran</span>
@@ -993,7 +952,6 @@
             </div>
           </div>
 
-          <!-- Total Log Aktivitas Terdata -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm hover:border-emerald-500/40 transition">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Entri Log</span>
@@ -1011,16 +969,14 @@
           </div>
         </div>
 
-        <!-- Panel Pintasan & Log Terbaru untuk Kasir -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Tabel Ringkas Log Jam Kerja Terkini -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
             <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
               <h3 class="text-xs font-bold text-white flex items-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Log Jam Kerja Terbaru
               </h3>
               <button onclick="switchTab('equipmentList')" class="text-xs text-amber-400 hover:text-amber-300">
-                Lihat Semua &rarr;
+                Lihat Kalender Box &rarr;
               </button>
             </div>
             <div class="overflow-x-auto">
@@ -1038,7 +994,6 @@
             </div>
           </div>
 
-          <!-- Tabel Ringkas Pengeluaran Terkini -->
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xl">
             <div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-800">
               <h3 class="text-xs font-bold text-white flex items-center gap-2">
@@ -1065,9 +1020,8 @@
         </div>
       </section>
 
-      <!-- ================= TAB: MASTER DATA TRUK (BARU) ================= -->
+      <!-- ================= TAB: MASTER DATA TRUK ================= -->
       <section id="tab-truckMaster" class="tab-content hidden space-y-6">
-        
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1080,7 +1034,6 @@
           </button>
         </div>
 
-        <!-- Filter & Search Truk -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="relative sm:col-span-2">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
@@ -1096,10 +1049,8 @@
           </div>
         </div>
 
-        <!-- Mobile Cards View for Trucks -->
         <div id="truckCardsMobile" class="md:hidden space-y-3"></div>
 
-        <!-- Desktop Table View Master Truk -->
         <div class="hidden md:block bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
@@ -1118,13 +1069,10 @@
             </table>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: DATA KIRIMAN TRUK (BARU - MULTI BARANG & STATUS BAYAR) ================= -->
+      <!-- ================= TAB: DATA KIRIMAN TRUK ================= -->
       <section id="tab-truckShipments" class="tab-content hidden space-y-6">
-        
-        <!-- Formulir Input Pengiriman Truk -->
         <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
           <div class="border-b border-slate-800 pb-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
             <div>
@@ -1143,7 +1091,6 @@
             <input type="hidden" id="editShipmentId" value="">
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <!-- Tanggal Pengiriman -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-regular fa-calendar text-sky-400 mr-1"></i> Tanggal Kirim
@@ -1151,7 +1098,6 @@
                 <input type="date" id="shipmentDate" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-sky-500">
               </div>
 
-              <!-- Pilihan Database Nama Truk -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-truck-moving text-sky-400 mr-1"></i> Nama Truk (Database)
@@ -1161,7 +1107,6 @@
                 </select>
               </div>
 
-              <!-- Input Manual Nama Supir -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-user-astronaut text-sky-400 mr-1"></i> Nama Supir (Manual)
@@ -1171,7 +1116,6 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <!-- Tujuan Kiriman -->
               <div class="sm:col-span-2">
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-location-dot text-sky-400 mr-1"></i> Tujuan Kiriman / Lokasi Proyek
@@ -1179,7 +1123,6 @@
                 <input type="text" id="shipmentDestination" required placeholder="Contoh: Proyek Tol Sta 18 / Batching Plant Jimbaran" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-sky-500">
               </div>
 
-              <!-- No. Surat Jalan / DO -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-file-invoice text-sky-400 mr-1"></i> No. Surat Jalan / DO (Opsional)
@@ -1188,7 +1131,6 @@
               </div>
             </div>
 
-            <!-- Bagian Multi Barang Kiriman Dinamis -->
             <div class="bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800 space-y-3">
               <div class="flex items-center justify-between pb-2 border-b border-slate-850">
                 <div>
@@ -1201,31 +1143,24 @@
                   <i class="fa-solid fa-plus"></i> Tambah Barang
                 </button>
               </div>
-
-              <!-- Kontainer Baris Barang Dinamis -->
-              <div id="shipmentItemsContainer" class="space-y-2.5 pt-1">
-                <!-- Diisi via JavaScript -->
-              </div>
+              <div id="shipmentItemsContainer" class="space-y-2.5 pt-1"></div>
             </div>
 
-            <!-- Status Pembayaran & Tagihan -->
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
               <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
                 <i class="fa-solid fa-money-bill-wave text-amber-400"></i> Status Pembayaran & Ongkos Angkut
               </span>
 
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
-                <!-- Pilihan Status Pembayaran: LUNAS, BON, COD -->
                 <div>
                   <label class="block text-[11px] font-semibold text-slate-300 mb-1">Status Pembayaran</label>
-                  <select id="shipmentPaymentStatus" onchange="onPaymentStatusChange()" required class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs font-bold text-white focus:outline-none focus:border-sky-500">
+                  <select id="shipmentPaymentStatus" required class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs font-bold text-white focus:outline-none focus:border-sky-500">
                     <option value="Lunas" class="text-emerald-400">Lunas (Selesai Dibayar)</option>
                     <option value="Bon" class="text-rose-400">Bon (Hutang / Tempo)</option>
                     <option value="COD" class="text-amber-400">COD (Cash on Delivery)</option>
                   </select>
                 </div>
 
-                <!-- Total Ongkos Angkut / Nilai Tagihan -->
                 <div>
                   <label class="block text-[11px] font-semibold text-slate-300 mb-1">Nilai Tagihan / Ongkir (Rp)</label>
                   <div class="relative">
@@ -1234,7 +1169,6 @@
                   </div>
                 </div>
 
-                <!-- Keterangan Bon / Catatan Bayar -->
                 <div>
                   <label class="block text-[11px] font-semibold text-slate-300 mb-1">Keterangan / Nama Pemesan</label>
                   <input type="text" id="shipmentClientName" placeholder="Contoh: Pak Nyoman / Mandor Proyek" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-sky-500">
@@ -1255,11 +1189,9 @@
                 Reset
               </button>
             </div>
-
           </form>
         </div>
 
-        <!-- Tabel Riwayat Data Kiriman Truk -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl p-4 sm:p-5">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-800">
             <div>
@@ -1276,7 +1208,6 @@
             </div>
           </div>
 
-          <!-- Filter & Pencarian Pengiriman -->
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 my-4">
             <div class="relative sm:col-span-2">
               <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
@@ -1297,10 +1228,8 @@
             </div>
           </div>
 
-          <!-- Mobile Cards View for Shipments -->
           <div id="shipmentCardsMobile" class="md:hidden space-y-3"></div>
 
-          <!-- Desktop Table View -->
           <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-850 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
@@ -1322,9 +1251,8 @@
           </div>
         </div>
 
-        <!-- ================= TEMPLATE CETAK SURAT JALAN TRUK (BISA DI-PRINT / SIMPAN PDF) ================= -->
+        <!-- TEMPLATE CETAK SURAT JALAN TRUK -->
         <div id="truckDeliveryNotePrintDocument" class="hidden bg-white text-black p-6 sm:p-10 max-w-4xl mx-auto rounded-xl shadow-2xl font-sans text-xs">
-          <!-- Kop Surat Pengiriman Material -->
           <div class="flex justify-between items-start pb-4 border-b-2 border-black">
             <div>
               <div class="flex items-center gap-2.5">
@@ -1351,7 +1279,6 @@
             </div>
           </div>
 
-          <!-- Rincian Kendaraan & Penerima -->
           <div class="grid grid-cols-2 gap-4 py-4 border-b border-gray-300">
             <div class="space-y-1">
               <div class="text-[10px] uppercase font-bold text-gray-500">KENDARAAN & PENGANGKUT:</div>
@@ -1367,7 +1294,6 @@
             </div>
           </div>
 
-          <!-- Tabel Rincian Multi Barang Kiriman -->
           <div class="my-4 overflow-x-auto border border-black">
             <table class="w-full text-xs border-collapse">
               <thead>
@@ -1379,13 +1305,10 @@
                   <th class="py-2 px-3 text-left w-48">Keterangan / Kondisi</th>
                 </tr>
               </thead>
-              <tbody id="dnDocItemsTableBody" class="divide-y divide-gray-300 text-gray-900">
-                <!-- Rendered dynamically -->
-              </tbody>
+              <tbody id="dnDocItemsTableBody" class="divide-y divide-gray-300 text-gray-900"></tbody>
             </table>
           </div>
 
-          <!-- Informasi Ongkos Angkut / Catatan -->
           <div class="flex flex-col sm:flex-row justify-between items-start gap-4 p-3 bg-gray-50 border border-gray-300 rounded mb-6">
             <div>
               <span class="text-[10px] font-bold text-gray-500 uppercase block">Catatan Pengiriman:</span>
@@ -1397,7 +1320,6 @@
             </div>
           </div>
 
-          <!-- Bagian Tanda Tangan 3 Pihak -->
           <div class="grid grid-cols-3 gap-4 text-center pt-2">
             <div>
               <div class="text-[11px] font-bold text-gray-700">Petugas Logistik / Pengirim</div>
@@ -1426,12 +1348,10 @@
             <em>Harap surat jalan ini ditandatangani oleh penerima saat material tiba di lokasi proyek. Rangkap 1: Pengirim, Rangkap 2: Supir, Rangkap 3: Penerima.</em>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: FORM INPUT LOG HARIAN / HM (ADMIN, OPERATOR & KASIR) ================= -->
+      <!-- ================= TAB: FORM INPUT LOG HARIAN / HM ================= -->
       <section id="tab-inputLog" class="tab-content hidden space-y-6">
-        
         <div class="max-w-3xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
           <div class="border-b border-slate-800 pb-4 mb-6">
             <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
@@ -1442,7 +1362,6 @@
           </div>
 
           <form id="dailyLogForm" onsubmit="handleSaveDailyLog(event)" class="space-y-5">
-            
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -1466,7 +1385,6 @@
               </div>
             </div>
 
-            <!-- Unit Alat Berat Selector -->
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                 <i class="fa-solid fa-truck-ramp-box text-amber-500 mr-1"></i> Unit Alat Berat
@@ -1485,7 +1403,6 @@
               </div>
             </div>
 
-            <!-- Jam Operasional Shift -->
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-amber-400 uppercase tracking-wider block">
@@ -1505,7 +1422,6 @@
                 </div>
               </div>
 
-              <!-- Hours Breakdown: Bucket & Breaker -->
               <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
                 <div>
                   <label class="block text-[11px] text-amber-300 font-bold mb-1">
@@ -1540,7 +1456,6 @@
               </div>
             </div>
 
-            <!-- Hour Meter (HM) Tracking -->
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">
@@ -1559,7 +1474,7 @@
                     <label class="block text-[11px] text-slate-400">HM Akhir</label>
                     <span class="text-[10px] text-amber-400/90 font-medium">Opsional (Auto)</span>
                   </div>
-                  <input type="number" step="0.1" id="logHmAkhir" oninput="calculateTotalHm()" placeholder="Otomatis jika kosong" class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500">
+                  <input type="number" step="0.1" id="logHmAkhir" oninput="calculateTotalHm(true)" placeholder="Otomatis jika kosong" class="w-full bg-slate-900 border border-slate-700 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
                   <label class="block text-[11px] text-slate-400 mb-1">Selisih HM Alat (HM)</label>
@@ -1577,7 +1492,6 @@
               </p>
             </div>
 
-            <!-- Catatan Pekerjaan -->
             <div>
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                 <i class="fa-regular fa-comment-dots text-amber-500 mr-1"></i> Catatan Pekerjaan Lapangan (Opsional)
@@ -1585,7 +1499,6 @@
               <textarea id="logNotes" rows="2" placeholder="Kondisi cuaca, kendala lapangan, atau catatan khusus lainnya..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
             </div>
 
-            <!-- Upload Foto Dokumentasi -->
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
               <div class="flex items-center justify-between">
                 <label class="block text-xs font-semibold text-slate-300">
@@ -1622,15 +1535,12 @@
                 Reset
               </button>
             </div>
-
           </form>
         </div>
-
       </section>
 
-      <!-- ================= TAB: INPUT PENGISIAN SOLAR (BARU - ADMIN & HELPER) ================= -->
+      <!-- ================= TAB: INPUT PENGISIAN SOLAR ================= -->
       <section id="tab-fuelLog" class="tab-content hidden space-y-6">
-        
         <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
           <div class="border-b border-slate-800 pb-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
             <div>
@@ -1646,9 +1556,7 @@
           </div>
 
           <form id="fuelLogForm" onsubmit="handleSaveFuelLog(event)" class="space-y-4">
-            
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <!-- Tanggal Pengisian -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-regular fa-calendar text-amber-500 mr-1"></i> Tanggal Pengisian
@@ -1656,7 +1564,6 @@
                 <input type="date" id="fuelDate" required class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-amber-500">
               </div>
 
-              <!-- Jam Pengisian -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-regular fa-clock text-amber-500 mr-1"></i> Jam Pengisian
@@ -1664,7 +1571,6 @@
                 <input type="time" id="fuelTime" required value="07:30" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-amber-500">
               </div>
 
-              <!-- Unit Alat Berat -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-truck-monster text-amber-500 mr-1"></i> Nama Unit Alat
@@ -1676,7 +1582,6 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <!-- Jumlah Solar (Liter) -->
               <div>
                 <label class="block text-xs font-semibold text-amber-300 mb-1.5">
                   <i class="fa-solid fa-droplet text-amber-400 mr-1"></i> Jumlah Solar (Liter)
@@ -1687,7 +1592,6 @@
                 </div>
               </div>
 
-              <!-- Lokasi Pengisian -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-location-dot text-amber-500 mr-1"></i> Lokasi / Site Pengisian
@@ -1695,7 +1599,6 @@
                 <input type="text" id="fuelLocation" required placeholder="Contoh: Pit A / Tangki Induk Workshop" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-amber-500">
               </div>
 
-              <!-- Nama Operator -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-helmet-safety text-amber-500 mr-1"></i> Nama Operator Unit
@@ -1705,7 +1608,6 @@
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <!-- Nama Helper / Petugas Pengisi -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-user-check text-amber-500 mr-1"></i> Nama Helper / Petugas Solar
@@ -1713,7 +1615,6 @@
                 <input type="text" id="fuelHelperName" required placeholder="Contoh: Ketut Helper / Tim Fuel" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2.5 px-3 text-sm text-white focus:outline-none focus:border-amber-500">
               </div>
 
-              <!-- No. Bon / Voucher / Catatan Singkat -->
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                   <i class="fa-solid fa-receipt text-amber-500 mr-1"></i> No. Voucher / Bon Solar (Opsional)
@@ -1729,7 +1630,6 @@
               <textarea id="fuelNotes" rows="2" placeholder="Catatan kondisi flow meter solar, sisa stok jerigen, dsb..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
             </div>
 
-            <!-- Upload Foto Dokumentasi Pengisian Solar (Opsional & Auto Kompresi ke Google Drive) -->
             <div class="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                 <label class="block text-xs font-semibold text-slate-300">
@@ -1769,11 +1669,9 @@
                 Reset
               </button>
             </div>
-
           </form>
         </div>
 
-        <!-- Tabel Riwayat Pengisian Solar -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl p-4 sm:p-5">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-800">
             <div>
@@ -1793,7 +1691,6 @@
             </div>
           </div>
 
-          <!-- Filter Pengisian Solar -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 my-4">
             <div class="relative sm:col-span-2">
               <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
@@ -1806,10 +1703,8 @@
             </div>
           </div>
 
-          <!-- Mobile Cards View for Fuel -->
           <div id="fuelCardsMobile" class="md:hidden space-y-3"></div>
 
-          <!-- Desktop Table View -->
           <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-850 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
@@ -1826,18 +1721,14 @@
                   <th class="py-2.5 px-3 text-right">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="fuelTableBody" class="divide-y divide-slate-800 text-slate-300">
-                <!-- Dynamically Rendered -->
-              </tbody>
+              <tbody id="fuelTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
             </table>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: INPUT RINCIAN SERVIS UNIT (ADMIN ONLY) ================= -->
+      <!-- ================= TAB: INPUT RINCIAN SERVIS UNIT ================= -->
       <section id="tab-serviceLog" class="tab-content hidden space-y-6">
-        
         <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
           <div class="border-b border-slate-800 pb-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
             <div>
@@ -1853,7 +1744,6 @@
           </div>
 
           <form id="actionServiceForm" onsubmit="handleSaveServiceAction(event)" class="space-y-6">
-            
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -1879,7 +1769,6 @@
               </div>
             </div>
 
-            <!-- Item Pekerjaan Servis -->
             <div class="bg-slate-950 p-4 sm:p-5 rounded-xl border border-slate-800 space-y-3">
               <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                 <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -1898,7 +1787,6 @@
               </div>
             </div>
 
-            <!-- Petugas & Keterangan Tambahan -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -1919,7 +1807,7 @@
               <label class="block text-xs font-semibold text-slate-300 mb-1.5">
                 <i class="fa-regular fa-clipboard text-amber-500 mr-1"></i> Rincian Merk/Nomor Seri Part & Keterangan Tambahan
               </label>
-              <textarea id="svcActionNotes" rows="2" placeholder="Contoh: Oli Mesin Meditran SX 15W-40 (20 Liter), Filter Solar Sakura F-1002, kondisi oli bekas tidak ada gram besi..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+              <textarea id="svcActionNotes" rows="2" placeholder="Contoh: Oli Mesin Meditran SX 15W-40 (20 Liter), Filter Solar Sakura F-1002..." class="w-full bg-slate-950 border border-slate-700 rounded-xl py-2 px-3 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
             </div>
 
             <div class="pt-2 flex gap-3">
@@ -1930,11 +1818,9 @@
                 Reset
               </button>
             </div>
-
           </form>
         </div>
 
-        <!-- Tabel Riwayat Servis -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl p-4 sm:p-5">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-800">
             <div>
@@ -1965,12 +1851,10 @@
             </table>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: PENGELUARAN & BELANJA KOMPONEN UNIT (ADMIN ONLY) ================= -->
+      <!-- ================= TAB: PENGELUARAN & BELANJA KOMPONEN UNIT ================= -->
       <section id="tab-expenseTab" class="tab-content hidden space-y-6">
-        
         <div class="max-w-4xl mx-auto bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-xl">
           <div class="border-b border-slate-800 pb-4 mb-6 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
             <div>
@@ -1986,7 +1870,6 @@
           </div>
 
           <form id="expenseForm" onsubmit="handleSaveEquipmentExpense(event)" class="space-y-4">
-            
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-slate-300 mb-1.5">
@@ -2079,11 +1962,9 @@
                 Reset
               </button>
             </div>
-
           </form>
         </div>
 
-        <!-- Tabel Riwayat Pengeluaran -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl p-4 sm:p-5">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-4 border-b border-slate-800">
             <div>
@@ -2132,12 +2013,10 @@
             </table>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: MANAJEMEN JADWAL SERVIS (ADMIN ONLY) ================= -->
+      <!-- ================= TAB: MANAJEMEN JADWAL SERVIS ================= -->
       <section id="tab-maintenance" class="tab-content hidden space-y-6">
-        
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 p-4 sm:p-5 rounded-2xl">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -2184,18 +2063,17 @@
             </table>
           </div>
         </div>
-
       </section>
 
-      <!-- ================= TAB: DAFTAR UNIT & LOG HISTORI (ADMIN ONLY) ================= -->
+      <!-- ================= TAB: DAFTAR UNIT & LOG HISTORI (KALENDER BOX HARIAN) ================= -->
       <section id="tab-equipmentList" class="tab-content hidden space-y-6">
         <!-- Action bar -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 p-4 sm:p-5 rounded-2xl shadow-xl no-print">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
               <i class="fa-solid fa-list-check text-amber-500"></i> Histori Log Operasional & Data Unit
             </h2>
-            <p class="text-xs text-slate-400">Arsip seluruh aktivitas harian, filter pencarian, dan cetak laporan resmi.</p>
+            <p class="text-xs text-slate-400">Pantau log harian dalam bentuk box tanggal berjejer, klik tanggal untuk detail, dan sinkronisasi otomatis ke Google Spreadsheet.</p>
           </div>
           <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
             <button onclick="openManageEquipmentModal()" class="flex-1 sm:flex-initial justify-center bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-3.5 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow">
@@ -2220,7 +2098,7 @@
         </div>
 
         <!-- Filter & Search Bar -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 no-print">
           <div class="relative sm:col-span-2">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
             <input type="text" id="logFilterSearch" oninput="renderDailyLogsTable()" placeholder="Cari berdasarkan nama operator, lokasi, atau kode unit..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-9 pr-4 text-xs text-white focus:outline-none focus:border-amber-500">
@@ -2232,46 +2110,59 @@
           </div>
         </div>
 
-        <!-- Tampilan Kartu Khusus Mobile -->
-        <div id="dailyLogsCardsMobile" class="md:hidden space-y-3"></div>
+        <!-- Kontainer Mobile Legacy (Disembunyikan karena tampilan box sudah responsif di semua ukuran layar) -->
+        <div id="dailyLogsCardsMobile" class="hidden space-y-3"></div>
 
-        <!-- Tabel Log Operasional (Desktop & Printable Area) -->
+        <!-- Area Rincian Entri Log Lapangan (Tampilan Box Tanggal Berjejer) -->
         <div id="printableArea" class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-          <div class="p-4 bg-slate-850 border-b border-slate-800 flex justify-between items-center no-print">
-            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-              <i class="fa-solid fa-table-list text-amber-500"></i> Rincian Entri Log Lapangan
-            </span>
-            <span id="logCounterBadge" class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2.5 py-1 rounded-full font-semibold">0 Entri</span>
+          <!-- Header & Filter Bulan -->
+          <div class="p-4 bg-slate-850 border-b border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 no-print">
+            <div>
+              <span class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <i class="fa-solid fa-calendar-days text-amber-500"></i> Rincian Entri Log Lapangan (Box Tanggal Berjejer)
+              </span>
+              <p class="text-[11px] text-slate-400 mt-0.5">Klik pada box tanggal untuk melihat rincian shift, foto bukti HM, atau menambah log baru.</p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <div class="flex items-center gap-1.5 bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5">
+                <i class="fa-regular fa-calendar text-amber-400 text-xs"></i>
+                <input type="month" id="logCalendarMonthFilter" onchange="renderDailyLogsTable()" class="bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer">
+              </div>
+              <span id="logCounterBadge" class="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-3 py-1.5 rounded-xl font-semibold">0 Entri</span>
+            </div>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
-              <thead class="bg-slate-850 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
-                <tr>
-                  <th class="py-3 px-3">Tanggal</th>
-                  <th class="py-3 px-3">Unit Alat</th>
-                  <th class="py-3 px-3">Lokasi Kerja</th>
-                  <th class="py-3 px-3">Operator</th>
-                  <th class="py-3 px-3 text-amber-400 font-bold">Jam Bucket</th>
-                  <th class="py-3 px-3 text-orange-400 font-bold">Jam Breaker</th>
-                  <th class="py-3 px-3 font-bold text-white">Total Jam</th>
-                  <th class="py-3 px-3">HM (Awal - Akhir)</th>
-                  <th class="py-3 px-3 text-center">Foto</th>
-                  <th class="py-3 px-3">Catatan Operasi</th>
-                  <th class="py-3 px-3 text-center">Google Sheets</th>
-                  <th class="py-3 px-3 text-center">WhatsApp</th>
-                  <th class="py-3 px-3 text-right no-print">Aksi</th>
-                </tr>
-              </thead>
-              <tbody id="dailyLogsTableBody" class="divide-y divide-slate-800 text-slate-300"></tbody>
-            </table>
+          <!-- Legenda Warna Box Tanggal -->
+          <div class="px-4 py-2.5 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center gap-4 text-[11px]">
+            <span class="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Keterangan Warna:</span>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-rose-600 border border-rose-400 inline-block"></span>
+              <span class="text-slate-300">Tidak Ada Input</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-emerald-600 border border-emerald-400 inline-block"></span>
+              <span class="text-slate-300">Bucket (Jam Kerja)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-blue-600 border border-blue-400 inline-block"></span>
+              <span class="text-slate-300">Breaker (Jam Kerja)</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3.5 h-3.5 rounded bg-amber-400 border border-amber-200 inline-block"></span>
+              <span class="text-slate-300">Mix Bucket &amp; Breaker</span>
+            </div>
+          </div>
+
+          <!-- Kontainer Box Tanggal Berjejer Per Unit -->
+          <div id="dailyLogsBoxContainer" class="p-4 sm:p-5 space-y-5">
+            <!-- Dirender otomatis oleh renderDailyLogsTable() -->
           </div>
         </div>
       </section>
 
-      <!-- ================= TAB: GENERATE INVOICE SEWA ALAT (ADMIN ONLY) ================= -->
+      <!-- ================= TAB: GENERATE INVOICE SEWA ALAT ================= -->
       <section id="tab-invoice" class="tab-content hidden space-y-6">
-        
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-xl no-print space-y-5">
           <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 pb-4 border-b border-slate-800">
             <div>
@@ -2290,7 +2181,6 @@
             </div>
           </div>
 
-          <!-- Form Parameter Invoice -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label class="block text-[11px] font-semibold text-slate-300 mb-1">Perusahaan Penyedia (Kop)</label>
@@ -2414,9 +2304,7 @@
                   <th class="py-2.5 px-3 text-right w-36">Total</th>
                 </tr>
               </thead>
-              <tbody id="invoiceTableBody" class="divide-y divide-gray-300">
-                <!-- Rendered via JS -->
-              </tbody>
+              <tbody id="invoiceTableBody" class="divide-y divide-gray-300"></tbody>
               <tfoot class="border-t-2 border-gray-500 font-bold bg-gray-50">
                 <tr>
                   <td class="py-2 px-3 border-r border-gray-400" colspan="2">TOTAL JAM</td>
@@ -2440,7 +2328,6 @@
             </table>
           </div>
 
-          <!-- Bagian Bawah: Instruksi Pembayaran & Tanda Tangan -->
           <div class="flex flex-col sm:flex-row justify-between items-end gap-6 pt-2">
             <div>
               <div class="text-xs font-bold text-gray-900 mb-1">Instruksi Pembayaran:</div>
@@ -2459,11 +2346,61 @@
             </div>
           </div>
         </div>
-
       </section>
 
     </main>
   </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal: Pop-Up Detail Log Tanggal Saat Box Diklik -->
+  <div id="modalDateLogDetail" class="fixed inset-0 z-[65] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-2xl p-5 sm:p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
+      <!-- Header Modal -->
+      <div class="flex items-start justify-between pb-3 border-b border-slate-800 mb-4 gap-3">
+        <div>
+          <div class="flex items-center gap-2">
+            <span id="dateDetailStatusBadge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide">STATUS</span>
+            <span id="dateDetailDateText" class="text-xs font-mono text-slate-400">2026-11-17</span>
+          </div>
+          <h3 id="dateDetailUnitTitle" class="text-base sm:text-lg font-bold text-white mt-1">EX-01 (Excavator)</h3>
+        </div>
+        <button type="button" onclick="closeModal('modalDateLogDetail')" class="h-8 w-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Ringkasan Jam pada Tanggal Tersebut -->
+      <div id="dateDetailSummaryGrid" class="grid grid-cols-3 gap-2.5 mb-4">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-center">
+          <span class="text-[10px] text-slate-400 block uppercase">Jam Bucket</span>
+          <strong id="dateDetailBucketTotal" class="text-sm sm:text-base font-extrabold text-emerald-400">0.0 Jam</strong>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-center">
+          <span class="text-[10px] text-slate-400 block uppercase">Jam Breaker</span>
+          <strong id="dateDetailBreakerTotal" class="text-sm sm:text-base font-extrabold text-blue-400">0.0 Jam</strong>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-center">
+          <span class="text-[10px] text-slate-400 block uppercase">Total Jam Kerja</span>
+          <strong id="dateDetailGrandTotal" class="text-sm sm:text-base font-extrabold text-amber-400">0.0 Jam</strong>
+        </div>
+      </div>
+
+      <!-- Daftar Rincian Shift / Entri Log pada Tanggal Tersebut -->
+      <div id="dateDetailEntriesContainer" class="flex-1 overflow-y-auto space-y-3 pr-1"></div>
+
+      <!-- Footer Modal -->
+      <div class="pt-4 mt-4 border-t border-slate-800 flex flex-wrap justify-between items-center gap-2">
+        <button type="button" id="btnQuickAddLogForDate" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-plus"></i> Input Log Tanggal Ini
+        </button>
+        <button type="button" onclick="closeModal('modalDateLogDetail')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition">
+          Tutup
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Tambah & Edit Truk Baru -->
   <div id="modalAddTruck" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
@@ -2523,7 +2460,7 @@
   </div>
 
   <!-- Modal: Pratinjau Foto Dokumentasi Penuh -->
-  <div id="modalImageViewer" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div id="modalImageViewer" class="fixed inset-0 z-[70] bg-black/85 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-4 shadow-2xl relative flex flex-col">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
         <h4 id="modalImageTitle" class="text-sm font-bold text-white flex items-center gap-2">
@@ -2645,7 +2582,6 @@
           </div>
         </div>
 
-        <!-- Backup & Restore -->
         <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-2.5">
           <div class="flex items-center justify-between">
             <span class="font-bold text-slate-200 flex items-center gap-1.5">
@@ -2666,7 +2602,6 @@
           </div>
         </div>
 
-        <!-- Hubungkan ke Cloud Database (Firebase) -->
         <div class="p-3.5 bg-slate-950 rounded-xl border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <span class="font-bold text-slate-200 flex items-center gap-1.5">
@@ -2706,7 +2641,7 @@
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
         <h3 class="text-base font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-table-cells text-emerald-400"></i> Integrasi Google Spreadsheet
+          <i class="fa-solid fa-table-cells text-emerald-400"></i> Integrasi Google Spreadsheet (Anti-Double & Rekap Matriks)
         </h3>
         <button onclick="closeModal('modalGoogleSheets')" class="text-slate-400 hover:text-white text-lg">
           <i class="fa-solid fa-xmark"></i>
@@ -2729,27 +2664,23 @@
           </p>
         </div>
 
-        <!-- Panduan Setup Google Apps Script Lengkap -->
         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <span class="text-xs font-bold text-emerald-400 uppercase tracking-wide flex items-center gap-1.5">
-              <i class="fa-solid fa-code"></i> Panduan Singkat Pemasangan (1 Menit)
+              <i class="fa-solid fa-code"></i> Skrip Google Apps Script (Anti-Double + Sheet Matriks Bulanan)
             </span>
             <button onclick="copyAppsScriptCode()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
               <i class="fa-regular fa-copy"></i> Salin Kode Skrip
             </button>
           </div>
           <ol class="text-xs text-slate-300 space-y-1.5 list-decimal list-inside leading-relaxed">
-            <li>Buka dokumen <strong>Google Spreadsheet</strong> baru milik Anda.</li>
-            <li>Klik menu <strong>Extensions (Ekstensi) &gt; Apps Script</strong>.</li>
-            <li>Hapus semua kode lama, lalu tempel kode skrip di bawah ini. Skrip ini akan <strong>otomatis membuat tab per unit alat dan menyimpan foto ke folder Google Drive "DOKUMENTASI_HM_PIT_RENTAL"</strong>.</li>
-            <li>Klik <strong>Deploy &gt; New deployment</strong> (atau <em>Manage deployments &gt; Edit &gt; Version: New version</em> jika memperbarui).</li>
-            <li>Ubah <em>Who has access</em> menjadi <strong>Anyone (Siapa saja)</strong>, lalu klik <strong>Deploy</strong>.</li>
-            <li>Salin URL Web App yang dihasilkan dan tempel pada input di atas.</li>
+            <li>Buka dokumen <strong>Google Spreadsheet</strong> milik Anda, lalu klik <strong>Extensions &gt; Apps Script</strong>.</li>
+            <li>Hapus semua kode lama dan tempel kode di bawah ini. Skrip ini otomatis <strong>mencegah data double (Upsert berdasarkan ID Log)</strong> dan membuat sheet matriks <strong>REKAP_JAM_KERJA</strong> (Tanggal ke bawah &times; Nama Unit ke kanan + Total Jam Kerja Bulanan di baris paling bawah).</li>
+            <li>Klik <strong>Deploy &gt; Manage deployments &gt; Edit (Pensil) &gt; Version: New version &gt; Deploy</strong>.</li>
           </ol>
 
-          <pre id="appsScriptSnippet" class="bg-slate-900 border border-slate-800 p-3 rounded-lg text-[11px] text-slate-300 font-mono overflow-x-auto max-h-48 select-all">
-// ================= KONFIGURASI RAHASIA (TERSEMBUNYI DARI HTML) =================
+          <pre id="appsScriptSnippet" class="bg-slate-900 border border-slate-800 p-3 rounded-lg text-[11px] text-slate-300 font-mono overflow-x-auto max-h-56 select-all">
+// ================= KONFIGURASI RAHASIA =================
 function getSecretAppConfig() {
   return {
     firebaseConfig: {
@@ -2766,34 +2697,28 @@ function getSecretAppConfig() {
   };
 }
 
-// 1. HANDLER GET: Mengirim konfigurasi API ke aplikasi saat user login di device baru
 function doGet(e) {
   var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : "getConfig";
-  
   if (action === "getConfig") {
-    var secret = getSecretAppConfig();
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
-      config: secret
+      config: getSecretAppConfig()
     })).setMimeType(ContentService.MimeType.JSON);
   }
-  
   return ContentService.createTextOutput(JSON.stringify({
     status: "online",
     message: "Pit Rental Backend API is active."
   })).setMimeType(ContentService.MimeType.JSON);
 }
 
-// 2. HANDLER POST: Menyimpan Log ke Sheet, Upload Foto ke Drive & Ambil Config
 function doPost(e) {
   var lock = LockService.getScriptLock();
-  lock.tryLock(30000);
-  
+  lock.waitLock(30000);
+
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var data = {};
-    
-    // 1. Ekstrak data JSON payload atau query parameters
+
     if (e && e.postData && e.postData.contents) {
       try {
         data = JSON.parse(e.postData.contents);
@@ -2804,7 +2729,6 @@ function doPost(e) {
       data = e.parameter;
     }
 
-    // A. Jika aplikasi meminta konfigurasi API via POST (saat login)
     if (data.action === "getConfig") {
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
@@ -2812,7 +2736,6 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 2. Handler Khusus: Upload Foto Langsung ke Google Drive
     if (data.action === "uploadImage" || (data.imageBlobBase64 && data.isPhotoUploadOnly)) {
       var folderName = data.folderName || "DOKUMENTASI_HM_PIT_RENTAL";
       var folders = DriveApp.getFoldersByName(folderName);
@@ -2827,62 +2750,56 @@ function doPost(e) {
       var driveFile = targetFolder.createFile(fileBlob);
       driveFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
 
-      var fileUrl = "https://drive.google.com/uc?export=view&id=" + driveFile.getId();
-
       return ContentService.createTextOutput(JSON.stringify({
         status: "success",
-        fileUrl: fileUrl,
-        fileId: driveFile.getId(),
-        message: "Foto berhasil diunggah ke Google Drive!"
+        fileUrl: "https://drive.google.com/uc?export=view&id=" + driveFile.getId(),
+        fileId: driveFile.getId()
       })).setMimeType(ContentService.MimeType.JSON);
     }
-    
-    // 3. Ambil nama unit alat lengkap untuk dijadikan nama Sheet/Tab
-    var rawSheetName = (e && e.parameter && e.parameter.sheetTargetName) 
-                       || data.sheetTargetName 
-                       || data.equipmentCode 
+
+    var rawSheetName = (e && e.parameter && e.parameter.sheetTargetName)
+                       || data.sheetTargetName
+                       || data.equipmentCode
                        || "UNIT_ALAT";
-    
+
     var cleanSheetName = String(rawSheetName)
       .replace(/[\[\]\*?\/\:\\]/g, "-")
       .replace(/\s+/g, " ")
-      .trim();
-      
-    if (!cleanSheetName) {
-      cleanSheetName = "ALAT_BERAT";
-    }
+      .trim() || "ALAT_BERAT";
     if (cleanSheetName.length > 90) {
       cleanSheetName = cleanSheetName.substring(0, 90).trim();
     }
-    
-    // 4. Cari sheet dengan nama unit alat tersebut, atau buat baru jika belum ada
+
+    if (data.action === "deleteLog") {
+      var delSheet = ss.getSheetByName(cleanSheetName);
+      if (delSheet && delSheet.getLastRow() > 1) {
+        var delValues = delSheet.getDataRange().getValues();
+        for (var r = delValues.length - 1; r >= 1; r--) {
+          if (String(delValues[r][0]) === String(data.id)) {
+            delSheet.deleteRow(r + 1);
+            break;
+          }
+        }
+      }
+      var delYm = (data.date && String(data.date).length >= 7) ? String(data.date).substring(0, 7) : Utilities.formatDate(new Date(), "Asia/Makassar", "yyyy-MM");
+      rebuildMonthlyMatrixSheet(ss, delYm, data.allUnitNames || []);
+      return ContentService.createTextOutput(JSON.stringify({ status: "deleted" })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     var sheet = ss.getSheetByName(cleanSheetName);
     if (!sheet) {
       sheet = ss.insertSheet(cleanSheetName);
     }
-    
-    // 5. Buat baris header jika tab ini baru dibuat / masih kosong
+
+    var headers = [
+      "ID Log", "Tanggal", "Nama Unit Alat", "Nama Operator", "Lokasi / Site",
+      "Jam Mulai", "Jam Selesai", "Jam Bucket", "Jam Breaker", "Total Jam Kerja",
+      "HM Awal", "HM Akhir", "Total HM", "Catatan Pekerjaan",
+      "Link Foto Google Drive", "Waktu Sinkronisasi"
+    ];
+
     if (sheet.getLastRow() === 0) {
-      var headers = [
-        "ID Log", 
-        "Tanggal", 
-        "Nama Unit Alat",
-        "Nama Operator", 
-        "Lokasi / Site",
-        "Jam Mulai", 
-        "Jam Selesai", 
-        "Jam Bucket", 
-        "Jam Breaker", 
-        "Total Jam Kerja", 
-        "HM Awal", 
-        "HM Akhir", 
-        "Total HM", 
-        "Catatan Pekerjaan", 
-        "Link Foto Google Drive",
-        "Waktu Sinkronisasi"
-      ];
       sheet.appendRow(headers);
-      
       var headerRange = sheet.getRange(1, 1, 1, headers.length);
       headerRange.setFontWeight("bold");
       headerRange.setBackground("#f59e0b");
@@ -2891,55 +2808,80 @@ function doPost(e) {
       sheet.setFrozenRows(1);
     }
 
-    // 6. Jika ada foto disertakan bersama log dan belum diupload terpisah
     var finalPhotoUrl = data.photoUrl || data.photoDriveUrl || "";
-    if (!finalPhotoUrl && data.imageData && data.imageData.startsWith("data:image")) {
+    if (!finalPhotoUrl && data.imageData && String(data.imageData).startsWith("data:image")) {
       try {
-        var folderName2 = "DOKUMENTASI_HM_PIT_RENTAL";
-        var folders2 = DriveApp.getFoldersByName(folderName2);
-        var f2 = folders2.hasNext() ? folders2.next() : DriveApp.createFolder(folderName2);
+        var f2 = DriveApp.getFoldersByName("DOKUMENTASI_HM_PIT_RENTAL").hasNext()
+          ? DriveApp.getFoldersByName("DOKUMENTASI_HM_PIT_RENTAL").next()
+          : DriveApp.createFolder("DOKUMENTASI_HM_PIT_RENTAL");
         var bytes = Utilities.base64Decode(data.imageData.replace(/^data:image\/\w+;base64,/, ""));
-        var fBlob = Utilities.newBlob(bytes, "image/jpeg", "HM_" + (data.equipmentCode||"UNIT") + "_" + new Date().getTime() + ".jpg");
-        var upFile = f2.createFile(fBlob);
+        var upFile = f2.createFile(Utilities.newBlob(bytes, "image/jpeg", "HM_" + cleanSheetName + "_" + new Date().getTime() + ".jpg"));
         upFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
         finalPhotoUrl = "https://drive.google.com/uc?export=view&id=" + upFile.getId();
       } catch (errPhoto) {}
     }
-    
-    // 7. Masukkan baris log
-    var unitFullName = data.equipmentCode || cleanSheetName;
-    var operatorName = data.operator || "-";
-    
-    sheet.appendRow([
-      data.id || ("LOG-" + new Date().getTime()),
-      data.date || "",
-      unitFullName,
-      operatorName,
-      data.location || "-",
-      data.startTime || "",
-      data.endTime || "",
-      Number(data.bucketHours) || 0,
-      Number(data.breakerHours) || 0,
-      Number(data.totalHours) || 0,
-      Number(data.hmAwal) || 0,
-      Number(data.hmAkhir) || 0,
-      Number(data.totalHm) || 0,
-      data.notes || "",
-      finalPhotoUrl || "-",
-      new Date().toLocaleString("id-ID", { timeZone: "Asia/Jakarta" })
-    ]);
-    
-    for (var col = 1; col <= 16; col++) {
+
+    var logId = String(data.id || ("LOG-" + new Date().getTime()));
+    var logDate = String(data.date || "");
+    var unitFullName = String(data.equipmentCode || cleanSheetName);
+    var operatorName = String(data.operator || "-");
+    var bktHrs = Number(data.bucketHours) || 0;
+    var brkHrs = Number(data.breakerHours) || 0;
+    var totHrs = Number(data.totalHours) || (bktHrs + brkHrs);
+    var hmAwal = Number(data.hmAwal) || 0;
+    var hmAkhir = Number(data.hmAkhir) || 0;
+    var totHm = Number(data.totalHm) || 0;
+
+    var rowValues = [
+      logId, logDate, unitFullName, operatorName, data.location || "-",
+      data.startTime || "", data.endTime || "", bktHrs, brkHrs, totHrs,
+      hmAwal, hmAkhir, totHm, data.notes || "", finalPhotoUrl || "-",
+      new Date().toLocaleString("id-ID", { timeZone: "Asia/Makassar" })
+    ];
+
+    // ANTI-DOUBLE (UPSERT)
+    var existingRowIndex = -1;
+    var lastRow = sheet.getLastRow();
+    if (lastRow > 1) {
+      var existingData = sheet.getRange(2, 1, lastRow - 1, 13).getValues();
+      for (var i = 0; i < existingData.length; i++) {
+        var rowId = String(existingData[i][0]).trim();
+        var rowDate = normalizeSheetDate(existingData[i][1]);
+        var rowOp = String(existingData[i][3]).trim();
+        var rowHmAwal = Number(existingData[i][10]) || 0;
+        var rowHmAkhir = Number(existingData[i][11]) || 0;
+
+        if (rowId === logId || (rowDate === logDate && rowOp === operatorName && rowHmAwal === hmAwal && rowHmAkhir === hmAkhir)) {
+          existingRowIndex = i + 2;
+          break;
+        }
+      }
+    }
+
+    if (existingRowIndex > 1) {
+      sheet.getRange(existingRowIndex, 1, 1, rowValues.length).setValues([rowValues]);
+    } else {
+      sheet.appendRow(rowValues);
+    }
+
+    for (var col = 1; col <= headers.length; col++) {
       sheet.autoResizeColumn(col);
     }
-    
+
+    var targetYearMonth = (logDate && logDate.length >= 7)
+      ? logDate.substring(0, 7)
+      : Utilities.formatDate(new Date(), "Asia/Makassar", "yyyy-MM");
+
+    rebuildMonthlyMatrixSheet(ss, targetYearMonth, data.allUnitNames || []);
+
     return ContentService.createTextOutput(JSON.stringify({
       status: "success",
+      mode: existingRowIndex > 1 ? "updated" : "inserted",
       sheetName: cleanSheetName,
-      photoUrl: finalPhotoUrl,
-      message: "Sukses tersimpan di sheet tab: " + cleanSheetName
+      matrixSheet: "REKAP_JAM_KERJA",
+      photoUrl: finalPhotoUrl
     })).setMimeType(ContentService.MimeType.JSON);
-    
+
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({
       status: "error",
@@ -2948,6 +2890,169 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+function normalizeSheetDate(val) {
+  if (!val) return "";
+  if (val instanceof Date) {
+    return Utilities.formatDate(val, "Asia/Makassar", "yyyy-MM-dd");
+  }
+  var s = String(val).trim();
+  if (s.length >= 10 && s.charAt(4) === "-") {
+    return s.substring(0, 10);
+  }
+  return s;
+}
+
+function rebuildMonthlyMatrixSheet(ss, yearMonth, registeredUnits) {
+  var matrixSheetName = "REKAP_JAM_KERJA";
+  var matrixSheet = ss.getSheetByName(matrixSheetName);
+  if (!matrixSheet) {
+    matrixSheet = ss.insertSheet(matrixSheetName, 0);
+  }
+
+  var parts = yearMonth.split("-");
+  var year = parseInt(parts[0], 10);
+  var month = parseInt(parts[1], 10);
+  var daysInMonth = new Date(year, month, 0).getDate();
+
+  var monthNames = [
+    "JANUARI", "FEBRUARI", "MARET", "APRIL", "MEI", "JUNI",
+    "JULI", "AGUSTUS", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DESEMBER"
+  ];
+  var monthTitle = (monthNames[month - 1] || yearMonth) + " " + year;
+
+  var allSheets = ss.getSheets();
+  var unitList = [];
+  var hoursMap = {};
+
+  if (Array.isArray(registeredUnits)) {
+    for (var ru = 0; ru < registeredUnits.length; ru++) {
+      var cleanU = String(registeredUnits[ru]).replace(/[\[\]\*?\/\:\\]/g, "-").replace(/\s+/g, " ").trim();
+      if (cleanU && unitList.indexOf(cleanU) === -1) {
+        unitList.push(cleanU);
+        hoursMap[cleanU] = {};
+      }
+    }
+  }
+
+  for (var s = 0; s < allSheets.length; s++) {
+    var sh = allSheets[s];
+    var sName = sh.getName();
+    if (sName === matrixSheetName || sName === "Sheet1") continue;
+
+    var lastR = sh.getLastRow();
+    if (lastR <= 1) continue;
+
+    if (unitList.indexOf(sName) === -1) {
+      unitList.push(sName);
+    }
+    if (!hoursMap[sName]) hoursMap[sName] = {};
+
+    var rows = sh.getRange(2, 1, lastR - 1, 10).getValues();
+    for (var r = 0; r < rows.length; r++) {
+      var dStr = normalizeSheetDate(rows[r][1]);
+      if (dStr.indexOf(yearMonth) === 0) {
+        var bkt = Number(rows[r][7]) || 0;
+        var brk = Number(rows[r][8]) || 0;
+        var tot = Number(rows[r][9]) || (bkt + brk);
+        hoursMap[sName][dStr] = (hoursMap[sName][dStr] || 0) + tot;
+      }
+    }
+  }
+
+  unitList.sort();
+  matrixSheet.clear();
+
+  if (unitList.length === 0) {
+    matrixSheet.getRange(1, 1).setValue("Belum ada data jam kerja unit pada bulan " + monthTitle);
+    return;
+  }
+
+  var totalCols = unitList.length + 2;
+
+  matrixSheet.getRange(1, 1, 1, totalCols).merge();
+  matrixSheet.getRange(1, 1)
+    .setValue("REKAPITULASI JAM KERJA BULANAN ALAT BERAT — " + monthTitle)
+    .setFontWeight("bold")
+    .setFontSize(12)
+    .setBackground("#0f172a")
+    .setFontColor("#f59e0b")
+    .setHorizontalAlignment("center")
+    .setVerticalAlignment("middle");
+  matrixSheet.setRowHeight(1, 32);
+
+  var headerRow = ["Tanggal"].concat(unitList).concat(["Total Harian"]);
+  var headerRange = matrixSheet.getRange(2, 1, 1, totalCols);
+  headerRange.setValues([headerRow])
+    .setFontWeight("bold")
+    .setBackground("#f59e0b")
+    .setFontColor("#0f172a")
+    .setHorizontalAlignment("center")
+    .setVerticalAlignment("middle");
+  matrixSheet.setRowHeight(2, 26);
+
+  var bodyRows = [];
+  for (var d = 1; d <= daysInMonth; d++) {
+    var dd = (d < 10 ? "0" + d : "" + d);
+    var mm = (month < 10 ? "0" + month : "" + month);
+    var isoDate = year + "-" + mm + "-" + dd;
+    var displayDate = dd + "/" + mm + "/" + year;
+
+    var rowArr = [displayDate];
+    for (var u = 0; u < unitList.length; u++) {
+      var uName = unitList[u];
+      var worked = (hoursMap[uName] && hoursMap[uName][isoDate]) ? hoursMap[uName][isoDate] : "";
+      rowArr.push(worked);
+    }
+
+    var excelRowNum = d + 2;
+    var firstUnitColLetter = columnToLetter(2);
+    var lastUnitColLetter = columnToLetter(unitList.length + 1);
+    rowArr.push("=SUM(" + firstUnitColLetter + excelRowNum + ":" + lastUnitColLetter + excelRowNum + ")");
+    bodyRows.push(rowArr);
+  }
+
+  var bodyRange = matrixSheet.getRange(3, 1, daysInMonth, totalCols);
+  bodyRange.setValues(bodyRows);
+  bodyRange.setHorizontalAlignment("center");
+  matrixSheet.getRange(3, 2, daysInMonth, totalCols - 1).setNumberFormat("0.0");
+
+  var footerRowNum = daysInMonth + 3;
+  var footerArr = ["TOTAL JAM KERJA BULANAN"];
+  for (var c = 2; c <= totalCols; c++) {
+    var colLetter = columnToLetter(c);
+    footerArr.push("=SUM(" + colLetter + "3:" + colLetter + (footerRowNum - 1) + ")");
+  }
+
+  var footerRange = matrixSheet.getRange(footerRowNum, 1, 1, totalCols);
+  footerRange.setValues([footerArr])
+    .setFontWeight("bold")
+    .setBackground("#1e293b")
+    .setFontColor("#fbbf24")
+    .setHorizontalAlignment("center")
+    .setVerticalAlignment("middle");
+  matrixSheet.getRange(footerRowNum, 2, 1, totalCols - 1).setNumberFormat("0.0");
+  matrixSheet.setRowHeight(footerRowNum, 28);
+
+  var fullTableRange = matrixSheet.getRange(2, 1, daysInMonth + 2, totalCols);
+  fullTableRange.setBorder(true, true, true, true, true, true, "#cbd5e1", SpreadsheetApp.BorderStyle.SOLID);
+
+  matrixSheet.setFrozenRows(2);
+  matrixSheet.setFrozenColumns(1);
+  for (var colIdx = 1; colIdx <= totalCols; colIdx++) {
+    matrixSheet.autoResizeColumn(colIdx);
+  }
+}
+
+function columnToLetter(column) {
+  var temp, letter = "";
+  while (column > 0) {
+    temp = (column - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    column = (column - temp - 1) / 26;
+  }
+  return letter;
 }</pre>
         </div>
 
@@ -2958,7 +3063,7 @@ function doPost(e) {
     </div>
   </div>
 
-  <!-- Modal: Tambah & Edit Unit Alat Berat Baru (Ditingkatkan ke z-[60] agar berada di atas modal Kelola Master Data) -->
+  <!-- Modal: Tambah & Edit Unit Alat Berat Baru -->
   <div id="modalAddEquipment" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
@@ -3005,7 +3110,7 @@ function doPost(e) {
   </div>
 
   <!-- Modal: Edit Laporan Rekapitulasi HM Operasional (Khusus Admin) -->
-  <div id="modalEditDailyLog" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
+  <div id="modalEditDailyLog" class="fixed inset-0 z-[70] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-2xl p-5 sm:p-6 shadow-2xl relative max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
         <div>
@@ -3042,7 +3147,6 @@ function doPost(e) {
           <input type="text" id="editLogEquipmentDisplay" readonly class="w-full bg-slate-950/70 border border-slate-800 rounded-xl py-2 px-3 text-xs font-bold text-amber-400 cursor-not-allowed">
         </div>
 
-        <!-- Rincian Shift & Attachment Hours -->
         <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
           <div class="text-xs font-bold text-amber-400 flex items-center justify-between">
             <span><i class="fa-regular fa-clock mr-1"></i> Jam Shift & Jam Kerja Attachment</span>
@@ -3069,7 +3173,6 @@ function doPost(e) {
           </div>
         </div>
 
-        <!-- Pembacaan Hour Meter (HM) -->
         <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
           <div class="text-xs font-bold text-slate-300 flex items-center justify-between">
             <span><i class="fa-solid fa-gauge-high mr-1 text-amber-500"></i> Pembacaan Hour Meter (HM)</span>
@@ -3083,7 +3186,7 @@ function doPost(e) {
             </div>
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">HM Akhir</label>
-              <input type="number" step="0.1" min="0" id="editLogHmAkhir" oninput="calculateEditLogHours()" required class="w-full bg-slate-900 border border-slate-700 rounded-lg py-1.5 px-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
+              <input type="number" step="0.1" min="0" id="editLogHmAkhir" oninput="calculateEditLogHours(true)" required class="w-full bg-slate-900 border border-slate-700 rounded-lg py-1.5 px-2.5 text-xs text-white focus:outline-none focus:border-amber-500">
             </div>
             <div>
               <label class="block text-[10px] text-slate-400 mb-1">Selisih HM</label>
@@ -3113,7 +3216,7 @@ function doPost(e) {
     </div>
   </div>
 
-  <!-- Modal: Kelola Daftar Unit Alat Berat (z-[55]) -->
+  <!-- Modal: Kelola Daftar Unit Alat Berat -->
   <div id="modalManageEquipment" class="fixed inset-0 z-[55] bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl p-5 sm:p-6 shadow-2xl relative max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
@@ -3208,7 +3311,7 @@ function doPost(e) {
     </div>
   </div>
 
-  <!-- Modal: Role Switcher (Admin, Operator, Helper) -->
+  <!-- Modal: Role Switcher -->
   <div id="modalSwitchRole" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl text-center">
       <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 mx-auto flex items-center justify-center mb-3">
@@ -3331,7 +3434,7 @@ function doPost(e) {
         <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
           <i class="fa-solid fa-address-book text-amber-500"></i> Daftar Akun Pengguna
         </span>
-        <span id="userCountBadge" class="text-[10px] bg-slate-800 text-amber-400 px-2 py-0.5 rounded-full font-bold">3 Akun</span>
+        <span id="userCountBadge" class="text-[10px] bg-slate-800 text-amber-400 px-2 py-0.5 rounded-full font-bold">4 Akun</span>
       </div>
 
       <div class="flex-1 overflow-y-auto space-y-2 pr-1 max-h-60">
@@ -3347,7 +3450,7 @@ function doPost(e) {
   </div>
 
   <!-- Notification Toast Container -->
-  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-[80] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
     <div id="toastCard" class="bg-slate-800 border border-slate-700 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
       <span id="toastIcon" class="text-amber-500 text-lg"><i class="fa-solid fa-circle-info"></i></span>
       <div>
@@ -3358,7 +3461,7 @@ function doPost(e) {
 
   <!-- ================= JAVASCRIPT APPLICATION LOGIC ================= -->
   <script>
-    /* Default Master Akun Pengguna (Admin, Operator, Helper, Kasir) */
+    /* Default Master Akun Pengguna */
     const DEFAULT_USERS = [
       { id: 'USR-01', username: 'admin_site', password: 'password123', name: 'Supervisor Site', role: 'admin' },
       { id: 'USR-02', username: 'operator_field1', password: 'password123', name: 'Operator Lapangan 1', role: 'operator' },
@@ -3366,30 +3469,19 @@ function doPost(e) {
       { id: 'USR-04', username: 'kasir_site', password: 'password123', name: 'Kasir Operasional', role: 'kasir' }
     ];
 
-    /* Default Master Data Truk (Dikosongkan total tanpa dummy) */
     const DEFAULT_TRUCKS = [];
-
-    /* Default Data Kiriman Truk (Dikosongkan total tanpa dummy) */
     const DEFAULT_TRUCK_SHIPMENTS = [];
-
-    /* Default Equipments (Dikosongkan total tanpa data dummy otomatis) */
     const DEFAULT_EQUIPMENTS = [];
-
-    // Dihapus total tanpa data dummy agar bersih
     const DEFAULT_LOGS = [];
-
-    // Pastikan DEFAULT_FUEL_LOGS kosong total tanpa data dummy
     const DEFAULT_FUEL_LOGS = [];
-
-    // Dihapus total tanpa data dummy agar bersih
     const DEFAULT_SERVICES = [];
 
     // Current State
     let currentUser = null;
     let appUsers = [];
     let equipments = [];
-    let trucks = []; // Master data armada truk
-    let truckShipments = []; // Data kiriman truk
+    let trucks = [];
+    let truckShipments = [];
     let dailyLogs = [];
     let fuelLogs = [];
     let serviceSchedules = [];
@@ -3405,6 +3497,10 @@ function doPost(e) {
     let whatsappFeatureEnabled = true;
     let currentDashboardPeriod = 'MONTHLY';
 
+    // Lock Anti-Double Sync Google Sheets
+    const inFlightGoogleSheetsSync = new Set();
+    let isBulkSyncingSheets = false;
+
     const DEFAULT_CHECKLIST_ITEMS = [
       { name: 'Ganti Oli Mesin', desc: 'Engine Oil (15W-40 / SAE)' },
       { name: 'Ganti Filter Hidrolik', desc: 'Hydraulic Return / Suction' },
@@ -3417,15 +3513,13 @@ function doPost(e) {
       { name: 'Ganti Filter Udara (Air Cleaner)', desc: 'Air Cleaner Inner & Outer' }
     ];
 
-    // Cloud Database (API Tersembunyi & Ditarik Otomatis dari Google Apps Script)
+    // Cloud Database
     let db = null;
     let auth = null;
     let isCloudDbConnected = false;
     let firebaseAppInstance = null;
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'heavy-equipment-pit-rental';
 
-    // Konfigurasi Firebase disembunyikan dari kode HTML dan diambil otomatis dari Google Apps Script
-    const DEFAULT_STATIC_FIREBASE_CONFIG = null;
     let remoteFirebaseConfigCache = null;
 
     async function fetchRemoteConfigFromGAS() {
@@ -3439,7 +3533,6 @@ function doPost(e) {
 
       const targetUrl = (googleSheetsUrl && googleSheetsUrl.trim() !== '') ? googleSheetsUrl : GAS_WEB_APP_URL;
 
-      // 1. Coba ambil via GET (?action=getConfig)
       try {
         const response = await fetch(`${targetUrl}?action=getConfig`, {
           method: 'GET',
@@ -3455,7 +3548,6 @@ function doPost(e) {
         console.warn("GET getConfig gagal, mencoba fallback POST:", errGet);
       }
 
-      // 2. Fallback: Coba ambil via POST (action: "getConfig")
       try {
         const responsePost = await fetch(targetUrl, {
           method: 'POST',
@@ -3579,7 +3671,6 @@ function doPost(e) {
             const data = docSnap.data();
             const docId = data?.id || docSnap.id;
             if (LEGACY_DUMMY_IDS.has(docId)) {
-              // Hapus otomatis data dummy bawaan lama jika masih tersimpan di Cloud DB
               cloudDeleteDocument(collectionName, docSnap.id);
             } else {
               list.push(data);
@@ -3589,7 +3680,6 @@ function doPost(e) {
         return list;
       };
 
-      // Master Truk (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'trucks'), (snapshot) => {
         trucks = extractCleanDocs(snapshot, 'trucks');
         saveAllToStorage();
@@ -3597,7 +3687,6 @@ function doPost(e) {
         renderTruckMasterTable();
       }, console.error);
 
-      // Kiriman Truk (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'truck_shipments'), (snapshot) => {
         const list = extractCleanDocs(snapshot, 'truck_shipments');
         list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
@@ -3606,7 +3695,6 @@ function doPost(e) {
         renderTruckShipmentsTable();
       }, console.error);
 
-      // 1. Equipments (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'equipments'), (snapshot) => {
         equipments = extractCleanDocs(snapshot, 'equipments');
         saveAllToStorage();
@@ -3615,10 +3703,10 @@ function doPost(e) {
         recalculateServiceStatuses();
         updateDashboardKPIs();
         renderServiceTable();
+        renderDailyLogsTable();
         if (typeof renderManageEquipmentList === 'function') renderManageEquipmentList();
       }, console.error);
 
-      // 2. Daily Logs (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'daily_logs'), (snapshot) => {
         const list = extractCleanDocs(snapshot, 'daily_logs');
         list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
@@ -3632,7 +3720,6 @@ function doPost(e) {
         if (typeof updateKasirDashboard === 'function') updateKasirDashboard();
       }, console.error);
 
-      // 3. Fuel Logs (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'fuel_logs'), (snapshot) => {
         const list = extractCleanDocs(snapshot, 'fuel_logs');
         list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
@@ -3644,7 +3731,6 @@ function doPost(e) {
         if (typeof updateKasirDashboard === 'function') updateKasirDashboard();
       }, console.error);
 
-      // 4. Pengeluaran Unit / Equipment Expenses (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'equipment_expenses'), (snapshot) => {
         const list = extractCleanDocs(snapshot, 'equipment_expenses');
         list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
@@ -3655,7 +3741,6 @@ function doPost(e) {
         if (typeof updateKasirDashboard === 'function') updateKasirDashboard();
       }, console.error);
 
-      // 5. Jadwal Servis / Service Schedules (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'service_schedules'), (snapshot) => {
         serviceSchedules = extractCleanDocs(snapshot, 'service_schedules');
         recalculateServiceStatuses();
@@ -3664,7 +3749,6 @@ function doPost(e) {
         renderServiceTable();
       }, console.error);
 
-      // 6. Riwayat Servis / Service Action History (Murni Real-Time Tanpa Dummy)
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'service_history'), (snapshot) => {
         const list = extractCleanDocs(snapshot, 'service_history');
         list.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
@@ -3673,7 +3757,6 @@ function doPost(e) {
         renderServiceHistoryTable();
       }, console.error);
 
-      // 7. Users
       onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snapshot) => {
         if (!snapshot.empty) {
           const list = [];
@@ -3702,7 +3785,6 @@ function doPost(e) {
         const { doc, deleteDoc } = window.__fb_sdk;
         const docRef = doc(db, 'artifacts', appId, 'public', 'data', collectionName, docId);
         await deleteDoc(docRef);
-        console.log(`Berhasil menghapus dokumen ${docId} dari koleksi ${collectionName}`);
       } catch (err) {
         console.error(`Gagal hapus cloud [${collectionName}]:`, err);
       }
@@ -3710,7 +3792,7 @@ function doPost(e) {
 
     window.addEventListener('DOMContentLoaded', () => {
       loadStorageData();
-      checkAuthSession(); // Periksa sesi lebih dulu agar tidak kembali ke login saat refresh
+      checkAuthSession();
       initDefaultDate();
       verifyAndActivateLocalDatabase();
       updateGSheetsStatusUI();
@@ -3722,7 +3804,6 @@ function doPost(e) {
       }
     });
 
-    // Inisialisasi awal seketika agar saat refresh tidak ada kedipan atau kembali ke login
     (function earlySessionCheck() {
       try {
         const session = localStorage.getItem('heavy_user_session');
@@ -3741,7 +3822,7 @@ function doPost(e) {
       }
     })();
 
-    /* ================= GOOGLE SHEETS & WHATSAPP INTEGRATION HELPERS ================= */
+    /* ================= GOOGLE SHEETS & WHATSAPP INTEGRATION (ANTI-DOUBLE) ================= */
     function openGoogleSheetsModal() {
       const input = document.getElementById('googleSheetsUrlInput');
       if (input) {
@@ -3792,37 +3873,120 @@ function doPost(e) {
       }
     }
 
-    async function sendLogToGoogleSheets(logId) {
-      if (!googleSheetsUrl) {
-        showToast('Atur URL Google Apps Script terlebih dahulu di menu G-Sheets!', 'warning');
-        return;
-      }
-      const log = dailyLogs.find(l => l.id === logId);
-      if (!log) return;
+    function getRegisteredUnitFullNames() {
+      return equipments.map(eq => `${eq.code} (${eq.category} - ${eq.model})`);
+    }
 
+    async function sendLogToGoogleSheets(logId, isSilent = false) {
+      if (!googleSheetsUrl) {
+        if (!isSilent) showToast('Atur URL Google Apps Script terlebih dahulu di menu G-Sheets!', 'warning');
+        return false;
+      }
+
+      // Kunci in-flight untuk mencegah pengiriman ganda bersamaan
+      if (inFlightGoogleSheetsSync.has(logId)) {
+        return false;
+      }
+
+      const log = dailyLogs.find(l => l.id === logId);
+      if (!log) return false;
+
+      inFlightGoogleSheetsSync.add(logId);
       const targetSheet = log.equipmentCode || 'ALAT_BERAT';
+
       try {
         const urlObj = new URL(googleSheetsUrl);
         urlObj.searchParams.set('sheetTargetName', targetSheet);
+
+        const payload = {
+          ...log,
+          action: 'upsertLog',
+          sheetTargetName: targetSheet,
+          allUnitNames: getRegisteredUnitFullNames(),
+          id: log.id
+        };
 
         await fetch(urlObj.toString(), {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(log)
+          body: JSON.stringify(payload)
         });
 
         log.synced = true;
         saveAllToStorage();
+        cloudSaveDocument('daily_logs', log.id, { synced: true });
+
         renderDailyLogsTable();
         renderDashboardRecentLogs();
         if (currentUser && currentUser.role === 'operator') {
           updateOperatorDashboard();
         }
-        showToast(`Log berhasil disinkronkan ke G-Sheets (${targetSheet})!`, 'success');
+        if (!isSilent) {
+          showToast(`Log tersinkron (Anti-Double) ke G-Sheets (${targetSheet})!`, 'success');
+        }
+        return true;
       } catch (err) {
         console.error("GSheets sync error:", err);
-        showToast('Gagal mengirim data ke Google Sheets.', 'warning');
+        if (!isSilent) showToast('Gagal mengirim data ke Google Sheets.', 'warning');
+        return false;
+      } finally {
+        inFlightGoogleSheetsSync.delete(logId);
+      }
+    }
+
+    async function syncAllPendingToGoogleSheets() {
+      if (!googleSheetsUrl) {
+        showToast('Atur URL Google Apps Script terlebih dahulu!', 'warning');
+        return;
+      }
+      if (isBulkSyncingSheets) {
+        showToast('Proses sinkronisasi sedang berjalan, mohon tunggu...', 'info');
+        return;
+      }
+
+      const pendingLogs = dailyLogs.filter(l => !l.synced);
+      const logsToSync = pendingLogs.length > 0 ? pendingLogs : dailyLogs;
+
+      if (logsToSync.length === 0) {
+        showToast('Belum ada data log operasional untuk disinkronkan.', 'warning');
+        return;
+      }
+
+      isBulkSyncingSheets = true;
+      showToast(`Menyinkronkan ${logsToSync.length} data log ke Google Sheets (Anti-Double)...`, 'info');
+
+      let successCount = 0;
+      try {
+        for (const item of logsToSync) {
+          const ok = await sendLogToGoogleSheets(item.id, true);
+          if (ok) successCount++;
+          await new Promise(resolve => setTimeout(resolve, 450));
+        }
+        showToast(`Selesai! ${successCount} log tersinkron rapi tanpa data ganda.`, 'success');
+      } finally {
+        isBulkSyncingSheets = false;
+      }
+    }
+
+    async function notifyGoogleSheetsDeleteLog(log) {
+      if (!googleSheetsUrl || !log) return;
+      try {
+        await fetch(googleSheetsUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'deleteLog',
+            id: log.id,
+            date: log.date,
+            equipmentCode: log.equipmentCode,
+            sheetTargetName: log.equipmentCode || 'ALAT_BERAT',
+            allUnitNames: getRegisteredUnitFullNames()
+          })
+        });
+      } catch (err) {
+        console.warn('Gagal menghapus baris di G-Sheets:', err);
       }
     }
 
@@ -3913,7 +4077,6 @@ function doPost(e) {
       showToast('Pengaturan laporan WhatsApp berhasil disimpan!', 'success');
     }
 
-    /* Helper Pembuka Tab WhatsApp Anti-Blokir Popup Browser */
     function openWhatsAppTab(waUrl, preOpenedWin = null) {
       try {
         if (preOpenedWin && !preOpenedWin.closed) {
@@ -3923,7 +4086,6 @@ function doPost(e) {
         }
       } catch (e) {}
 
-      // Coba buka tab baru menggunakan elemen anchor <a> secara programatik
       const a = document.createElement('a');
       a.href = waUrl;
       a.target = '_blank';
@@ -4034,7 +4196,6 @@ function doPost(e) {
       showToast('Membuka WhatsApp untuk mengirim rekap harian...', 'success');
     }
 
-    /* Pengiriman Laporan Pengisian Solar via WhatsApp */
     function sendFuelLogToWhatsApp(fuelId, preOpenedWin = null) {
       if (!whatsappFeatureEnabled) {
         if (preOpenedWin && !preOpenedWin.closed) preOpenedWin.close();
@@ -4071,7 +4232,6 @@ function doPost(e) {
       showToast('Membuka WhatsApp untuk mengirim bukti solar...', 'success');
     }
 
-    /* Pengiriman Rekapan Total Harian Pengisian Solar via WhatsApp */
     function sendDailyFuelSummaryWhatsApp() {
       if (!whatsappFeatureEnabled) {
         showToast('Fitur WhatsApp sedang nonaktif. Aktifkan di menu Pengaturan WhatsApp.', 'warning');
@@ -4089,7 +4249,6 @@ function doPost(e) {
       let grandTotalLiters = 0;
       let summaryRows = '';
 
-      // Kelompokkan atau buat baris rincian pengisian
       todayFuelLogs.forEach((fl, index) => {
         const liters = parseFloat(fl.liters) || 0;
         grandTotalLiters += liters;
@@ -4125,22 +4284,27 @@ function doPost(e) {
     }
 
     function initDefaultDate() {
-      const today = new Date().toISOString().split('T')[0];
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const currentMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
       const logDateInput = document.getElementById('logDate');
       const fuelDate = document.getElementById('fuelDate');
       const shipmentDate = document.getElementById('shipmentDate');
       const serviceTargetDate = document.getElementById('serviceTargetDate');
       const svcActionDate = document.getElementById('svcActionDate');
       const expDate = document.getElementById('expDate');
+      const calMonthFilter = document.getElementById('logCalendarMonthFilter');
+
       if (logDateInput) logDateInput.value = today;
       if (fuelDate) fuelDate.value = today;
       if (shipmentDate) shipmentDate.value = today;
       if (serviceTargetDate) serviceTargetDate.value = today;
       if (svcActionDate) svcActionDate.value = today;
       if (expDate) expDate.value = today;
+      if (calMonthFilter && !calMonthFilter.value) calMonthFilter.value = currentMonth;
     }
 
-    // Daftar ID dummy bawaan versi lama yang otomatis dibersihkan agar tidak muncul kembali
     const LEGACY_DUMMY_IDS = new Set([
       'EQ-01', 'EQ-02', 'EQ-03', 'EQ-04',
       'EXP-01', 'EXP-02', 'EXP-03', 'EXP-04', 'EXP-1', 'EXP-2',
@@ -4227,7 +4391,7 @@ function doPost(e) {
       localStorage.setItem('heavy_wa_enabled', whatsappFeatureEnabled.toString());
     }
 
-    /* Auth & Role Access Control (Auto-Connect API & Cloud DB saat Login di Device Baru) */
+    /* Auth & Role Access Control */
     async function handleLogin(e) {
       e.preventDefault();
       const usernameInput = (document.getElementById('usernameInput')?.value || '').trim();
@@ -4241,14 +4405,11 @@ function doPost(e) {
       }
 
       try {
-        // 1. Otomatis tarik konfigurasi API dari Google Script & aktifkan Cloud DB di device ini
         if (!isCloudDbConnected) {
           await window.initCloudDatabase();
-          // Beri waktu singkat agar listener akun pengguna dari Cloud DB sempat tersinkron
           await new Promise(resolve => setTimeout(resolve, 600));
         }
 
-        // 2. Cocokkan username dan password dari daftar akun terbaru
         const matchedUser = appUsers.find(u => u.username.toLowerCase() === usernameInput.toLowerCase());
 
         if (!matchedUser) {
@@ -4280,7 +4441,7 @@ function doPost(e) {
         updateWhatsAppStatusUI();
         updateDbIndicatorUI(isCloudDbConnected ? 'cloud' : 'local');
 
-        showToast(`Login berhasil (${currentUser.role.toUpperCase()}): ${currentUser.name}. Koneksi Cloud & API Aktif Otomatis!`, 'success');
+        showToast(`Login berhasil (${currentUser.role.toUpperCase()}): ${currentUser.name}.`, 'success');
         renderAppView();
       } finally {
         if (submitBtn) {
@@ -4297,13 +4458,12 @@ function doPost(e) {
           const parsed = JSON.parse(session);
           if (parsed && parsed.id && parsed.role) {
             currentUser = parsed;
-            // Langsung pastikan tampilan antarmuka dialihkan ke aplikasi utama
             const authEl = document.getElementById('authView');
             const mainEl = document.getElementById('mainAppView');
             if (authEl) authEl.classList.add('hidden');
             if (mainEl) mainEl.classList.remove('hidden');
 
-            renderAppView(true); // Kirim flag isRefresh = true agar selalu masuk ke dashboard
+            renderAppView(true);
             return;
           }
         }
@@ -4312,14 +4472,12 @@ function doPost(e) {
         currentUser = null;
       }
 
-      // Jika tidak ada sesi aktif yang valid, tampilkan layar login
       const authEl = document.getElementById('authView');
       const mainEl = document.getElementById('mainAppView');
       if (authEl) authEl.classList.remove('hidden');
       if (mainEl) mainEl.classList.add('hidden');
     }
 
-    /* Strict Role-Based View & Access Controller */
     function renderAppView(isRefresh = false) {
       if (!currentUser) {
         const authEl = document.getElementById('authView');
@@ -4336,7 +4494,6 @@ function doPost(e) {
 
       const role = currentUser.role || 'operator';
 
-      // Update User Badge
       const userDisplayName = document.getElementById('userDisplayName');
       const userRoleBadge = document.getElementById('userRoleBadge');
       if (userDisplayName) userDisplayName.innerText = currentUser.name;
@@ -4348,7 +4505,6 @@ function doPost(e) {
       };
       if (userRoleBadge) userRoleBadge.innerText = roleLabels[role] || role;
 
-      // Atur Nama Operator / Helper otomatis jika form dibuka & kunci input jika role operator/helper
       const opInput = document.getElementById('logOperatorName');
       if (opInput) {
         if (role === 'operator') {
@@ -4372,21 +4528,18 @@ function doPost(e) {
         }
       }
 
-      // 1. Sembunyikan elemen admin-only di header (termasuk tombol switch role & settings)
       const adminOnlyElements = document.querySelectorAll('.role-admin-only');
       adminOnlyElements.forEach(el => {
         if (role === 'admin') el.classList.remove('hidden');
         else el.classList.add('hidden');
       });
 
-      // Kontrol visibilitas tombol "Unit Baru" di form log (Hanya Admin)
       const btnAddEquip = document.getElementById('btnAddNewEquipInLog');
       if (btnAddEquip) {
         if (role === 'admin') btnAddEquip.classList.remove('hidden');
         else btnAddEquip.classList.add('hidden');
       }
 
-      // Kontrol tombol Tambah Unit Baru di modal kelola unit (Kasir TIDAK BISA menambah unit)
       const btnManageAdd = document.getElementById('btnManageAddNewEquip');
       const manageSubtitle = document.getElementById('manageEquipmentSubtitle');
       if (btnManageAdd) {
@@ -4394,14 +4547,11 @@ function doPost(e) {
         else btnManageAdd.classList.add('hidden');
       }
       if (manageSubtitle) {
-        if (role === 'kasir') {
-          manageSubtitle.innerText = 'Daftar armada alat berat terdaftar (Mode Lihat Saja).';
-        } else {
-          manageSubtitle.innerText = 'Tambah armada baru atau hapus unit yang sudah tidak beroperasi.';
-        }
+        manageSubtitle.innerText = role === 'kasir'
+          ? 'Daftar armada alat berat terdaftar (Mode Lihat Saja).'
+          : 'Tambah armada baru atau hapus unit yang sudah tidak beroperasi.';
       }
 
-      // 2. Tampilkan HANYA tab desktop yang sesuai untuk peran tersebut
       const navAdmin = document.getElementById('navTabDashboard');
       const navOpDash = document.getElementById('navTabOperatorDashboard');
       const navHlpDash = document.getElementById('navTabHelperDashboard');
@@ -4431,7 +4581,6 @@ function doPost(e) {
         if (navEquip) navEquip.classList.remove('hidden');
         if (navInvoice) navInvoice.classList.remove('hidden');
       } else if (role === 'operator') {
-        // Operator HANYA melihat: Dashboard Operator & Input HM
         if (navAdmin) navAdmin.classList.add('hidden');
         if (navOpDash) navOpDash.classList.remove('hidden');
         if (navHlpDash) navHlpDash.classList.add('hidden');
@@ -4446,7 +4595,6 @@ function doPost(e) {
         if (navEquip) navEquip.classList.add('hidden');
         if (navInvoice) navInvoice.classList.add('hidden');
       } else if (role === 'helper') {
-        // Helper HANYA melihat: Dashboard Helper & Pengisian Solar
         if (navAdmin) navAdmin.classList.add('hidden');
         if (navOpDash) navOpDash.classList.add('hidden');
         if (navHlpDash) navHlpDash.classList.remove('hidden');
@@ -4461,7 +4609,6 @@ function doPost(e) {
         if (navEquip) navEquip.classList.add('hidden');
         if (navInvoice) navInvoice.classList.add('hidden');
       } else if (role === 'kasir') {
-        // Kasir melihat: Dashboard Kasir, Data Kiriman Truk, Data Truk, Input HM, Pengisian Solar, Pengeluaran Unit, dan Unit & Log
         if (navAdmin) navAdmin.classList.add('hidden');
         if (navOpDash) navOpDash.classList.add('hidden');
         if (navHlpDash) navHlpDash.classList.add('hidden');
@@ -4477,82 +4624,9 @@ function doPost(e) {
         if (navInvoice) navInvoice.classList.add('hidden');
       }
 
-      // 3. Konfigurasi Sidebar Mobile Drawer Sesuai Peran
-      const mSideAdmin = document.getElementById('mSideTabDashboard');
-      const mSideOp = document.getElementById('mSideTabOperatorDashboard');
-      const mSideHlp = document.getElementById('mSideTabHelperDashboard');
-      const mSideKasir = document.getElementById('mSideTabKasirDashboard');
       const mSideRoleBadge = document.getElementById('mobileUserRoleBadge');
       if (mSideRoleBadge) mSideRoleBadge.innerText = roleLabels[role] || role;
 
-      // Reset semua status dashboard di mobile drawer
-      if (mSideAdmin) mSideAdmin.classList.add('hidden');
-      if (mSideOp) mSideOp.classList.add('hidden');
-      if (mSideHlp) mSideHlp.classList.add('hidden');
-      if (mSideKasir) mSideKasir.classList.add('hidden');
-
-      const mSideInputLog = document.getElementById('mSideTabInputLog');
-      const mSideFuelLog = document.getElementById('mSideTabFuelLog');
-      const mSideShipments = document.getElementById('mSideTabTruckShipments');
-      const mSideTruckMaster = document.getElementById('mSideTabTruckMaster');
-      const mSideExpense = document.getElementById('mSideTabExpense');
-      const mSideEquip = document.getElementById('mSideTabEquipment');
-      const mSideAdminGroup = document.getElementById('mSideAdminGroup');
-      const mSideService = document.getElementById('mSideTabService');
-      const mSideMaint = document.getElementById('mSideTabMaintenance');
-      const mSideInvoice = document.getElementById('mSideTabInvoice');
-
-      if (role === 'admin') {
-        if (mSideAdmin) mSideAdmin.classList.remove('hidden');
-        if (mSideInputLog) mSideInputLog.classList.remove('hidden');
-        if (mSideFuelLog) mSideFuelLog.classList.remove('hidden');
-        if (mSideShipments) mSideShipments.classList.remove('hidden');
-        if (mSideTruckMaster) mSideTruckMaster.classList.remove('hidden');
-        if (mSideExpense) mSideExpense.classList.remove('hidden');
-        if (mSideEquip) mSideEquip.classList.remove('hidden');
-        if (mSideAdminGroup) mSideAdminGroup.classList.remove('hidden');
-        if (mSideService) mSideService.classList.remove('hidden');
-        if (mSideMaint) mSideMaint.classList.remove('hidden');
-        if (mSideInvoice) mSideInvoice.classList.remove('hidden');
-      } else if (role === 'operator') {
-        if (mSideOp) mSideOp.classList.remove('hidden');
-        if (mSideInputLog) mSideInputLog.classList.remove('hidden');
-        if (mSideFuelLog) mSideFuelLog.classList.add('hidden');
-        if (mSideShipments) mSideShipments.classList.add('hidden');
-        if (mSideTruckMaster) mSideTruckMaster.classList.add('hidden');
-        if (mSideExpense) mSideExpense.classList.add('hidden');
-        if (mSideEquip) mSideEquip.classList.add('hidden');
-        if (mSideAdminGroup) mSideAdminGroup.classList.add('hidden');
-        if (mSideService) mSideService.classList.add('hidden');
-        if (mSideMaint) mSideMaint.classList.add('hidden');
-        if (mSideInvoice) mSideInvoice.classList.add('hidden');
-      } else if (role === 'helper') {
-        if (mSideHlp) mSideHlp.classList.remove('hidden');
-        if (mSideInputLog) mSideInputLog.classList.add('hidden');
-        if (mSideFuelLog) mSideFuelLog.classList.remove('hidden');
-        if (mSideShipments) mSideShipments.classList.add('hidden');
-        if (mSideTruckMaster) mSideTruckMaster.classList.add('hidden');
-        if (mSideExpense) mSideExpense.classList.add('hidden');
-        if (mSideEquip) mSideEquip.classList.add('hidden');
-        if (mSideAdminGroup) mSideAdminGroup.classList.add('hidden');
-        if (mSideService) mSideService.classList.add('hidden');
-        if (mSideMaint) mSideMaint.classList.add('hidden');
-        if (mSideInvoice) mSideInvoice.classList.add('hidden');
-      } else if (role === 'kasir') {
-        if (mSideKasir) mSideKasir.classList.remove('hidden');
-        if (mSideInputLog) mSideInputLog.classList.remove('hidden');
-        if (mSideFuelLog) mSideFuelLog.classList.remove('hidden');
-        if (mSideShipments) mSideShipments.classList.remove('hidden');
-        if (mSideTruckMaster) mSideTruckMaster.classList.remove('hidden');
-        if (mSideExpense) mSideExpense.classList.remove('hidden');
-        if (mSideEquip) mSideEquip.classList.remove('hidden');
-        if (mSideAdminGroup) mSideAdminGroup.classList.add('hidden');
-        if (mSideService) mSideService.classList.add('hidden');
-        if (mSideMaint) mSideMaint.classList.add('hidden');
-        if (mSideInvoice) mSideInvoice.classList.add('hidden');
-      }
-
-      // 4. Pertahankan menu/tab terakhir saat halaman direfresh (jika diizinkan untuk peran tersebut)
       let defaultRoleTab = 'dashboard';
       if (role === 'operator') defaultRoleTab = 'operatorDashboard';
       else if (role === 'helper') defaultRoleTab = 'helperDashboard';
@@ -4569,7 +4643,6 @@ function doPost(e) {
       }
       switchTab(targetTab);
 
-      // Populate Data ke UI secara aman
       try {
         populateEquipmentDropdowns();
         populateInvoiceFilters();
@@ -4597,7 +4670,6 @@ function doPost(e) {
       return false;
     }
 
-    /* Helper Navigasi Mobile Sidebar Drawer Geser Kiri - PASTI TAMPIL & BEBAS STUCK */
     function toggleMobileSidebar(open) {
       const overlay = document.getElementById('mobileSidebarOverlay');
       if (!overlay) return;
@@ -4612,7 +4684,6 @@ function doPost(e) {
       }
     }
 
-    /* Generator Item Menu Mobile Dinamis - Menjamin Semua Menu Sesuai Peran Pasti Muncul */
     function renderMobileMenuItems() {
       const container = document.getElementById('mobileMenuListContainer');
       const badge = document.getElementById('mobileUserRoleBadge');
@@ -4627,7 +4698,6 @@ function doPost(e) {
       };
       if (badge) badge.innerText = roleLabels[role] || role;
 
-      // Ambil tab yang sedang aktif
       let activeTab = 'dashboard';
       if (role === 'operator') activeTab = 'operatorDashboard';
       else if (role === 'helper') activeTab = 'helperDashboard';
@@ -4640,7 +4710,6 @@ function doPost(e) {
         }
       } catch (e) {}
 
-      // Daftar menu sesuai hak akses
       let menuItems = [];
 
       if (role === 'admin') {
@@ -4766,12 +4835,10 @@ function doPost(e) {
       showToast('Anda telah keluar dari sistem.', 'info');
     }
 
-    /* Tab Switching with Strict Role Guard */
     function switchTab(tabName) {
       if (!currentUser) return;
       const role = currentUser.role || 'operator';
 
-      // Role Access Enforcement Guard
       if (role === 'operator') {
         if (tabName !== 'operatorDashboard' && tabName !== 'inputLog') {
           showToast('Akses ditolak: User Operator hanya dapat mengakses Dashboard Operator dan Input HM.', 'warning');
@@ -4800,7 +4867,6 @@ function doPost(e) {
       const target = document.getElementById(`tab-${tabName}`);
       if (target) target.classList.remove('hidden');
 
-      // Update Desktop Tabs UI
       document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.className = btn.className.replace('bg-amber-500 text-slate-950', 'text-slate-400 hover:text-white');
       });
@@ -4810,40 +4876,8 @@ function doPost(e) {
         activeBtn.className = activeBtn.className.replace('text-slate-400 hover:text-white', 'bg-amber-500 text-slate-950');
       }
 
-      // Update Mobile Drawer Items Active Styling
-      const sideMap = {
-        'dashboard': 'mSideTabDashboard',
-        'operatorDashboard': 'mSideTabOperatorDashboard',
-        'helperDashboard': 'mSideTabHelperDashboard',
-        'kasirDashboard': 'mSideTabKasirDashboard',
-        'truckShipments': 'mSideTabTruckShipments',
-        'truckMaster': 'mSideTabTruckMaster',
-        'inputLog': 'mSideTabInputLog',
-        'fuelLog': 'mSideTabFuelLog',
-        'expenseTab': 'mSideTabExpense',
-        'serviceLog': 'mSideTabService',
-        'maintenance': 'mSideTabMaintenance',
-        'invoice': 'mSideTabInvoice',
-        'equipmentList': 'mSideTabEquipment'
-      };
-
-      Object.values(sideMap).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.classList.remove('bg-amber-500', 'text-slate-950', 'font-bold');
-          el.classList.add('text-slate-300');
-        }
-      });
-
-      const currentSideEl = document.getElementById(sideMap[tabName]);
-      if (currentSideEl) {
-        currentSideEl.classList.remove('text-slate-300');
-        currentSideEl.classList.add('bg-amber-500', 'text-slate-950', 'font-bold');
-      }
-
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      // Refresh data spesifik tab
       if (tabName === 'dashboard') {
         updateDashboardKPIs();
         renderEquipmentLeaderboard();
@@ -4884,7 +4918,6 @@ function doPost(e) {
       const opName = (currentUser.name || '').toLowerCase();
       const opUsername = (currentUser.username || '').toLowerCase();
 
-      // Filter ketat: Hanya menghitung log yang operatornya sesuai nama/username operator yang login
       const operatorLogs = dailyLogs.filter(l => {
         if (!l.operator) return false;
         const logOp = l.operator.toLowerCase();
@@ -4911,7 +4944,6 @@ function doPost(e) {
       if (kpiBreaker) kpiBreaker.innerText = totalBreaker.toFixed(1);
       if (kpiLogs) kpiLogs.innerText = operatorLogs.length;
 
-      // Render Riwayat Khusus Operator
       const tbody = document.getElementById('operatorLogsTableBody');
       const mobileList = document.getElementById('operatorLogsListMobile');
 
@@ -4996,7 +5028,6 @@ function doPost(e) {
       if (kpiExp) kpiExp.innerText = formatRupiah(totalExpensesAmount);
       if (kpiLogs) kpiLogs.innerText = dailyLogs.length;
 
-      // Render Tabel Jam Kerja Terbaru di Dashboard Kasir
       const logsTbody = document.getElementById('kasirRecentLogsTable');
       if (logsTbody) {
         logsTbody.innerHTML = '';
@@ -5018,7 +5049,6 @@ function doPost(e) {
         }
       }
 
-      // Render Tabel Pengeluaran Terbaru di Dashboard Kasir
       const expTbody = document.getElementById('kasirRecentExpensesTable');
       if (expTbody) {
         expTbody.innerHTML = '';
@@ -5045,7 +5075,6 @@ function doPost(e) {
     function updateHelperDashboard() {
       if (!currentUser) return;
       const hlpName = currentUser.name.toLowerCase();
-      // Filter catatan solar yang diinput oleh helper ini (atau semua jika demo mode)
       const hlpLogs = fuelLogs.filter(fl => {
         if (!fl.helperName) return false;
         return fl.helperName.toLowerCase().includes(hlpName) || hlpName.includes('helper');
@@ -5064,7 +5093,6 @@ function doPost(e) {
       const totalTransactions = hlpLogs.length;
       const avgLiters = totalTransactions > 0 ? Math.round(totalLiters / totalTransactions) : 0;
 
-      // Cari unit terbanyak
       let topEquip = '-';
       let maxLit = 0;
       Object.keys(equipCountMap).forEach(k => {
@@ -5084,7 +5112,6 @@ function doPost(e) {
       if (kpiAvg) kpiAvg.innerText = avgLiters;
       if (kpiTop) kpiTop.innerText = topEquip;
 
-      // Render Tabel Riwayat Khusus Helper
       const tbody = document.getElementById('helperFuelTableBody');
       const mobileList = document.getElementById('helperFuelListMobile');
 
@@ -5150,7 +5177,7 @@ function doPost(e) {
       }
     }
 
-    /* ================= MODUL PENGISIAN SOLAR (FUEL LOG) ================= */
+    /* ================= MODUL PENGISIAN SOLAR ================= */
     function handleFuelImageSelection(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -5165,7 +5192,6 @@ function doPost(e) {
         const img = new Image();
         img.onload = function() {
           const canvas = document.createElement('canvas');
-          // Kompresi pintar (maks dimensi 800px & kualitas JPEG 0.65) untuk menghemat storage Google Drive & Cloud DB
           const maxDim = 800;
           let width = img.width;
           let height = img.height;
@@ -5184,7 +5210,6 @@ function doPost(e) {
           ctx.drawImage(img, 0, 0, width, height);
           currentUploadedFuelImageData = canvas.toDataURL('image/jpeg', 0.65);
 
-          // Hitung ukuran hasil kompresi
           const base64Length = currentUploadedFuelImageData.length - ('data:image/jpeg;base64,').length;
           const compressedSizeKB = Math.max(1, Math.round((base64Length * 3 / 4) / 1024));
 
@@ -5267,7 +5292,6 @@ function doPost(e) {
 
       let googleDrivePhotoUrl = '';
 
-      // JIKA ADA FOTO (OPSIONAL): Upload gambar terkompresi langsung ke Google Drive agar menghemat storage
       if (currentUploadedFuelImageData) {
         if (saveBtn) saveBtn.disabled = true;
         if (saveBtnText) saveBtnText.innerText = 'Mengunggah Foto Solar ke Google Drive...';
@@ -5301,14 +5325,12 @@ function doPost(e) {
         helperName: document.getElementById('fuelHelperName').value.trim(),
         voucherNo: document.getElementById('fuelVoucherNo').value.trim() || '-',
         notes: document.getElementById('fuelNotes').value.trim(),
-        // Jika berhasil diunggah ke Drive, simpan URL saja untuk menghemat storage lokal & Firestore
         imageData: googleDrivePhotoUrl || currentUploadedFuelImageData || '',
         photoDriveUrl: googleDrivePhotoUrl || ''
       };
 
       fuelLogs.push(newFuel);
       saveAllToStorage();
-
       cloudSaveDocument('fuel_logs', newFuel.id, newFuel);
 
       updateDashboardKPIs();
@@ -5455,14 +5477,10 @@ function doPost(e) {
         return;
       }
 
-      // Hapus dari state lokal
       fuelLogs = fuelLogs.filter(f => f.id !== id);
       saveAllToStorage();
-
-      // Hapus dari cloud database
       cloudDeleteDocument('fuel_logs', id);
 
-      // Segarkan tampilan
       renderFuelLogsTable();
       updateDashboardKPIs();
       if (typeof updateHelperDashboard === 'function') updateHelperDashboard();
@@ -5477,7 +5495,7 @@ function doPost(e) {
         return;
       }
 
-      let csvContent = "data:text/csv;charset=utf-8,";
+      let csvContent = "\uFEFF";
       csvContent += "ID,Tanggal,Jam,Unit Alat,Jumlah Solar (Liter),Lokasi,Operator,Helper,No Voucher,Link Foto Google Drive,Catatan\n";
 
       fuelLogs.forEach(fl => {
@@ -5501,7 +5519,6 @@ function doPost(e) {
       showToast('File CSV pengisian solar berhasil diunduh!', 'success');
     }
 
-    /* Helper Pengunduhan File CSV Cross-Platform */
     function downloadCSVFile(csvContent, filename) {
       try {
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -5529,14 +5546,13 @@ function doPost(e) {
       }
     }
 
-    /* Export CSV Log Operasional (HM & Attachment) */
     function exportLogsToCSV() {
       if (!dailyLogs || dailyLogs.length === 0) {
         showToast('Tidak ada data log harian untuk diekspor ke CSV.', 'warning');
         return;
       }
 
-      let csvContent = "\uFEFF"; // Byte Order Mark (BOM) agar karakter dan angka terbaca rapi di Excel
+      let csvContent = "\uFEFF";
       csvContent += "ID Log,Tanggal,Unit Alat,Lokasi Kerja,Operator,Jam Mulai,Jam Selesai,Jam Bucket,Jam Breaker,Total Jam Kerja,HM Awal,HM Akhir,Selisih HM,Catatan,Status Sync\n";
 
       dailyLogs.forEach(l => {
@@ -5570,7 +5586,6 @@ function doPost(e) {
       showToast('File CSV log operasional berhasil diunduh!', 'success');
     }
 
-    /* Export CSV Pengeluaran & Belanja Unit */
     function exportExpensesToCSV() {
       if (!equipmentExpenses || equipmentExpenses.length === 0) {
         showToast('Tidak ada data pengeluaran unit untuk diekspor ke CSV.', 'warning');
@@ -5608,7 +5623,6 @@ function doPost(e) {
       showToast('File CSV pengeluaran unit berhasil diunduh!', 'success');
     }
 
-    /* Fungsi Cetak Laporan Tabel Log Operasional */
     function printLogTable() {
       renderDailyLogsTable();
 
@@ -5629,7 +5643,6 @@ function doPost(e) {
       }, 150);
     }
 
-    /* Helper & Dropdown Populator */
     function populateEquipmentDropdowns() {
       const logSelect = document.getElementById('logEquipmentSelect');
       const fuelSelect = document.getElementById('fuelEquipSelect');
@@ -5640,7 +5653,6 @@ function doPost(e) {
       const expFilterEquipSelect = document.getElementById('expenseFilterEquipment');
       const filterEquipSelect = document.getElementById('logFilterEquipment');
 
-      // Urutkan daftar unit dari A ke Z berdasarkan kode unit / nama unit
       const sortedEquipments = equipments.slice().sort((a, b) => {
         return (a.code || '').localeCompare(b.code || '', undefined, { numeric: true, sensitivity: 'base' });
       });
@@ -5707,7 +5719,6 @@ function doPost(e) {
       return 'Rp' + Math.round(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
-    /* Handler Saat Unit Alat Dipilih di Form Input HM */
     function onEquipmentSelectChange() {
       const select = document.getElementById('logEquipmentSelect');
       const selectedId = select ? select.value : '';
@@ -5717,16 +5728,12 @@ function doPost(e) {
       if (equip) {
         const hmAwalInput = document.getElementById('logHmAwal');
         if (hmAwalInput) {
-          // Isi otomatis HM Awal dari currentHM unit yang dipilih
           hmAwalInput.value = equip.currentHM !== undefined && equip.currentHM !== null ? equip.currentHM : 0;
-          
-          // Hitung ulang HM akhir & selisih secara otomatis
           calculateTotalHm();
         }
       }
     }
 
-    /* Mengisi Dropdown Filter Invoice Berdasarkan Data Alat yang Ada */
     function populateInvoiceFilters() {
       const equipSelect = document.getElementById('invFilterEquipment');
       if (!equipSelect) return;
@@ -5747,7 +5754,6 @@ function doPost(e) {
       });
     }
 
-    /* Logika Pembuatan Invoice Sesuai Format PDF Berdasarkan Nama Unit & Lokasi Manual */
     function generateInvoicePreview() {
       const senderEl = document.getElementById('invCompanySender');
       const clientEl = document.getElementById('invCompanyClient');
@@ -5773,7 +5779,6 @@ function doPost(e) {
       const filterEquipId = filterEquipEl?.value || 'ALL';
       const manualLocation = (manualLocationEl?.value || '').trim();
 
-      // Update Label Header Invoice
       const docSender = document.getElementById('invDocSender');
       const docSignerCompany = document.getElementById('invDocSignerCompany');
       const docClient = document.getElementById('invDocClient');
@@ -5790,13 +5795,11 @@ function doPost(e) {
       if (docBankInfo) docBankInfo.innerText = bankInfo;
       if (docSignerName) docSignerName.innerText = signer;
 
-      // Update Teks Lokasi & Periode pada Dokumen Invoice
       const locValEl = document.getElementById('invDocLocationVal');
       if (locValEl) {
         locValEl.innerText = manualLocation ? manualLocation : 'Semua Lokasi Operasional';
       }
 
-      // Periode Text
       const periodTextEl = document.getElementById('invDocPeriodText');
       if (periodTextEl) {
         if (filterStart || filterEnd) {
@@ -5806,7 +5809,6 @@ function doPost(e) {
         }
       }
 
-      // Filter Data Log Berdasarkan Tanggal, Unit Alat, dan Lokasi Manual
       let logsToProcess = dailyLogs.slice().sort((a, b) => new Date(a.date) - new Date(b.date));
 
       if (filterEquipId !== 'ALL') {
@@ -5848,7 +5850,6 @@ function doPost(e) {
         return;
       }
 
-      // Kelompokkan log berdasarkan Unit Alat Berat
       const groupedByUnit = {};
       logsToProcess.forEach(l => {
         const unitLabel = l.equipmentCode || 'UNIT ALAT';
@@ -5938,7 +5939,6 @@ function doPost(e) {
       }
     }
 
-    /* ================= CHECKLIST SERVIS DINAMIS & HANDLER ================= */
     function renderServiceChecklistUI() {
       const container = document.getElementById('serviceChecklistContainer');
       if (!container) return;
@@ -6032,7 +6032,6 @@ function doPost(e) {
 
       let akhir;
       if (!isManualEndEdit) {
-        // Selalu perbarui HM Akhir otomatis: HM Awal + Jam Kerja Attachment
         akhir = parseFloat((awal + totalJamAttachment).toFixed(1));
         if (akhirInput) {
           akhirInput.value = akhir;
@@ -6112,7 +6111,6 @@ function doPost(e) {
       if (notice) notice.classList.add('hidden');
     }
 
-    /* Helper Unggah Foto ke Google Drive Melalui Google Apps Script Web App */
     async function uploadImageToGoogleDrive(base64Data, prefix = 'HM', unitCode = 'UNIT', folderName = 'DOKUMENTASI_HM_PIT_RENTAL') {
       if (!googleSheetsUrl || !base64Data) return '';
       try {
@@ -6206,7 +6204,6 @@ function doPost(e) {
       const saveBtnText = document.getElementById('saveLogBtnText');
       const notice = document.getElementById('uploadStatusNotice');
 
-      // Siapkan tab baru lebih awal (sinkron saat tombol diklik) agar browser tidak memblokir popup WhatsApp setelah proses async upload selesai
       let preOpenedWaWin = null;
       if (whatsappFeatureEnabled && currentUploadedImageData) {
         try {
@@ -6219,7 +6216,6 @@ function doPost(e) {
 
       let googleDrivePhotoUrl = '';
 
-      // JIKA ADA FOTO: Upload langsung ke Google Drive agar storage Firestore TIDAK PENUH
       if (currentUploadedImageData) {
         if (saveBtn) saveBtn.disabled = true;
         if (saveBtnText) saveBtnText.innerText = 'Mengunggah Foto ke Google Drive...';
@@ -6240,9 +6236,10 @@ function doPost(e) {
         }
       }
 
+      const logDateVal = document.getElementById('logDate').value;
       const newLog = {
         id: 'LOG-' + new Date().getTime(),
-        date: document.getElementById('logDate').value,
+        date: logDateVal,
         equipmentId: equip.id,
         equipmentCode: `${equip.code} (${equip.category} - ${equip.model})`,
         operator: document.getElementById('logOperatorName').value.trim(),
@@ -6256,7 +6253,6 @@ function doPost(e) {
         hmAkhir: hmAkhir,
         totalHm: totalHm,
         notes: (document.getElementById('logNotes')?.value || '').trim(),
-        // Simpan URL Google Drive jika berhasil, atau fallback base64 ringan jika URL gagal
         imageData: googleDrivePhotoUrl || currentUploadedImageData,
         photoDriveUrl: googleDrivePhotoUrl || '',
         synced: false
@@ -6265,6 +6261,12 @@ function doPost(e) {
       dailyLogs.push(newLog);
       equip.currentHM = hmAkhir;
       saveAllToStorage();
+
+      // Arahkan filter bulan kalender box ke bulan tanggal log yang baru diinput
+      const calMonthFilter = document.getElementById('logCalendarMonthFilter');
+      if (calMonthFilter && logDateVal && logDateVal.length >= 7) {
+        calMonthFilter.value = logDateVal.substring(0, 7);
+      }
 
       cloudSaveDocument('daily_logs', newLog.id, newLog);
       cloudSaveDocument('equipments', equip.id, equip);
@@ -6279,22 +6281,22 @@ function doPost(e) {
 
       showToast(
         googleDrivePhotoUrl 
-          ? 'Log & foto berhasil tersimpan di Google Drive!' 
-          : 'Log operasional berhasil disimpan!', 
+          ? 'Log & foto berhasil tersimpan & otomatis disinkronkan!' 
+          : 'Log operasional berhasil disimpan & otomatis disinkronkan!', 
         'success'
       );
 
-      // Langsung buka tab pengiriman WhatsApp tanpa setTimeout agar tidak diblokir browser
       if (whatsappFeatureEnabled) {
         sendLogToWhatsApp(newLog.id, preOpenedWaWin);
       }
 
       if (googleSheetsUrl) {
-        sendLogToGoogleSheets(newLog.id);
+        sendLogToGoogleSheets(newLog.id, true);
       }
 
       resetLogForm();
     }
+
     function calculateEditLogHours(isManualEndEdit = false) {
       const awal = parseFloat(document.getElementById('editLogHmAwal')?.value) || 0;
       const akhirInp = document.getElementById('editLogHmAkhir');
@@ -6340,29 +6342,23 @@ function doPost(e) {
 
       let totalFixedLogs = 0;
 
-      // Proses perbaikan per unit alat berat
       equipments.forEach(eq => {
-        // Ambil semua log untuk unit ini dan urutkan secara kronologis berdasarkan tanggal
         const unitLogs = dailyLogs.filter(l => l.equipmentId === eq.id || (l.equipmentCode && l.equipmentCode.includes(eq.code)));
-
         if (unitLogs.length === 0) return;
 
-        // Urutkan berdasarkan tanggal menaik (lama ke baru)
         unitLogs.sort((a, b) => {
           const dateCmp = (a.date || '').localeCompare(b.date || '');
           if (dateCmp !== 0) return dateCmp;
           return (a.startTime || '').localeCompare(b.startTime || '');
         });
 
-        // Tentukan titik awal HM dari log pertama atau currentHM yang ada
         let runningHM = parseFloat(unitLogs[0].hmAwal) || 0;
 
-        unitLogs.forEach((log, idx) => {
+        unitLogs.forEach((log) => {
           const bkt = parseFloat(log.bucketHours) || 0;
           const brk = parseFloat(log.breakerHours) || 0;
           const totalJam = parseFloat((bkt + brk).toFixed(1));
 
-          // Set HM Awal bersambung dari log sebelumnya
           const oldAwal = log.hmAwal;
           const oldAkhir = log.hmAkhir;
 
@@ -6376,11 +6372,9 @@ function doPost(e) {
             cloudSaveDocument('daily_logs', log.id, log);
           }
 
-          // Perbarui runningHM untuk iterasi shift berikutnya
           runningHM = log.hmAkhir;
         });
 
-        // Perbarui currentHM pada master data alat ke HM akhir paling baru
         eq.currentHM = parseFloat(runningHM.toFixed(1));
         cloudSaveDocument('equipments', eq.id, eq);
       });
@@ -6395,7 +6389,6 @@ function doPost(e) {
       showToast(`Sukses merekonstruksi urutan HM! ${totalFixedLogs} entri diperbaiki secara otomatis.`, 'success');
     }
 
-    /* Recalculate and Render KPI Logic */
     function recalculateServiceStatuses() {
       serviceSchedules.forEach(srv => {
         if (srv.status === 'COMPLETED') return;
@@ -6468,7 +6461,6 @@ function doPost(e) {
       if (kpiLogs) kpiLogs.innerText = filteredLogs.length;
       if (kpiFuel) kpiFuel.innerText = totalFuel.toLocaleString('id-ID');
 
-      // Alerts
       const alertContainer = document.getElementById('maintenanceAlertList');
       if (alertContainer) {
         alertContainer.innerHTML = '';
@@ -6657,111 +6649,328 @@ function doPost(e) {
       }
     }
 
+    /* ================= RENDER BOX TANGGAL BERJEJER & POP-UP DETAIL ================= */
+    function formatBoxNumber(val) {
+      const num = parseFloat(val) || 0;
+      return num % 1 === 0 ? num.toString() : num.toFixed(1);
+    }
+
     function renderDailyLogsTable() {
       const search = (document.getElementById('logFilterSearch')?.value || '').toLowerCase();
       const equipFilter = document.getElementById('logFilterEquipment')?.value || 'ALL';
+      const monthInput = document.getElementById('logCalendarMonthFilter');
 
-      let filtered = dailyLogs.filter(l => {
-        const matchSearch = (l.operator && l.operator.toLowerCase().includes(search)) ||
-                            (l.equipmentCode && l.equipmentCode.toLowerCase().includes(search)) ||
-                            (l.location && l.location.toLowerCase().includes(search));
-        const matchEquip = (equipFilter === 'ALL') || (l.equipmentId === equipFilter);
-        return matchSearch && matchEquip;
-      }).reverse();
+      if (monthInput && !monthInput.value) {
+        const now = new Date();
+        monthInput.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+      }
+
+      const selectedMonth = monthInput?.value || new Date().toISOString().slice(0, 7);
+      const [yearStr, monthStr] = selectedMonth.split('-');
+      const yearNum = parseInt(yearStr, 10);
+      const monthNum = parseInt(monthStr, 10);
+      const daysInMonth = new Date(yearNum, monthNum, 0).getDate();
+
+      const monthLogs = dailyLogs.filter(l => {
+        const matchMonth = (l.date || '').startsWith(selectedMonth);
+        const matchSearch = !search ||
+          (l.operator && l.operator.toLowerCase().includes(search)) ||
+          (l.equipmentCode && l.equipmentCode.toLowerCase().includes(search)) ||
+          (l.location && l.location.toLowerCase().includes(search)) ||
+          (l.notes && l.notes.toLowerCase().includes(search));
+        return matchMonth && matchSearch;
+      });
 
       const badge = document.getElementById('logCounterBadge');
-      if (badge) badge.innerText = `${filtered.length} Entri`;
+      if (badge) badge.innerText = `${monthLogs.length} Entri (${selectedMonth})`;
 
-      const tbody = document.getElementById('dailyLogsTableBody');
       const mobileList = document.getElementById('dailyLogsCardsMobile');
+      if (mobileList) mobileList.classList.add('hidden');
 
-      if (tbody) {
-        tbody.innerHTML = '';
-        if (filtered.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="13" class="py-6 text-center text-slate-500">Tidak ada log harian yang sesuai filter.</td></tr>';
-        } else {
-          filtered.forEach(log => {
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-800/40 transition';
-            tr.innerHTML = `
-              <td class="py-3 px-3 font-mono text-slate-300 whitespace-nowrap">${log.date}</td>
-              <td class="py-3 px-3 font-bold text-amber-400">${log.equipmentCode}</td>
-              <td class="py-3 px-3 text-slate-300">${log.location || '-'}</td>
-              <td class="py-3 px-3 text-white font-medium">${log.operator}</td>
-              <td class="py-3 px-3 text-amber-400 font-bold">${log.bucketHours || 0}</td>
-              <td class="py-3 px-3 text-orange-400 font-bold">${log.breakerHours || 0}</td>
-              <td class="py-3 px-3 font-bold text-white">${log.totalHours || (parseFloat(log.bucketHours||0) + parseFloat(log.breakerHours||0)).toFixed(1)}</td>
-              <td class="py-3 px-3 font-mono text-slate-300 text-xs">${log.hmAwal} &rarr; ${log.hmAkhir} <span class="text-amber-400">(${log.totalHm})</span></td>
-              <td class="py-3 px-3 text-center">
-                ${log.imageData || log.photoDriveUrl ? `
-                  <button onclick="openImageViewerModal('${log.photoDriveUrl || log.imageData}', 'Bukti HM: ${log.equipmentCode}')" class="px-2 py-1 bg-amber-500/10 text-amber-400 border border-amber-500/30 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1 mx-auto">
-                    <i class="fa-solid ${log.photoDriveUrl ? 'fa-brands fa-google-drive text-emerald-400' : 'fa-image'}"></i> Foto
-                  </button>
-                ` : `<span class="text-slate-600">-</span>`}
-              </td>
-              <td class="py-3 px-3 text-slate-400 text-[11px] max-w-xs truncate">${log.notes || '-'}</td>
-              <td class="py-3 px-3 text-center whitespace-nowrap">
-                <button onclick="sendLogToGoogleSheets('${log.id}')" class="px-2 py-1 rounded-lg text-[10px] font-semibold ${log.synced ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
-                  <i class="fa-solid ${log.synced ? 'fa-check' : 'fa-cloud-arrow-up'}"></i> ${log.synced ? 'Tersimpan' : 'Sync'}
-                </button>
-              </td>
-              <td class="py-3 px-3 text-center whitespace-nowrap">
-                <button onclick="sendLogToWhatsApp('${log.id}')" class="px-2 py-1 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[10px] font-semibold flex items-center justify-center gap-1 mx-auto">
-                  <i class="fa-brands fa-whatsapp"></i> Kirim WA
-                </button>
-              </td>
-              <td class="py-3 px-3 text-right no-print whitespace-nowrap">
-                ${currentUser && currentUser.role === 'admin' ? `
-                  <div class="inline-flex items-center gap-1">
-                    <button type="button" onclick="editDailyLog('${log.id}')" title="Edit Log Operasional (Admin Saja)" class="p-1.5 text-slate-400 hover:text-amber-400 transition">
-                      <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button type="button" onclick="deleteDailyLog('${log.id}')" title="Hapus Log (Admin Saja)" class="p-1.5 text-slate-500 hover:text-rose-400 transition">
-                      <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                  </div>
-                ` : '<span class="text-slate-600">-</span>'}
-              </td>
-            `;
-            tbody.appendChild(tr);
+      const container = document.getElementById('dailyLogsBoxContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const unitMap = new Map();
+      equipments
+        .slice()
+        .sort((a, b) => (a.code || '').localeCompare(b.code || '', undefined, { numeric: true, sensitivity: 'base' }))
+        .forEach(eq => {
+          const fullLabel = `${eq.code} (${eq.category} - ${eq.model})`;
+          unitMap.set(eq.id, {
+            id: eq.id,
+            code: eq.code,
+            displayName: fullLabel,
+            category: eq.category,
+            model: eq.model
           });
+        });
+
+      dailyLogs.forEach(l => {
+        const key = l.equipmentId || l.equipmentCode;
+        if (key && !unitMap.has(key)) {
+          unitMap.set(key, {
+            id: key,
+            code: (l.equipmentCode || 'UNIT').split(' ')[0],
+            displayName: l.equipmentCode || key,
+            category: '',
+            model: ''
+          });
+        }
+      });
+
+      let unitsToRender = Array.from(unitMap.values());
+      if (equipFilter !== 'ALL') {
+        unitsToRender = unitsToRender.filter(u => u.id === equipFilter);
+      }
+
+      if (unitsToRender.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center text-slate-500 text-xs bg-slate-950/60 rounded-xl border border-slate-800">
+            Belum ada unit alat berat yang terdaftar. Klik tombol <strong class="text-amber-400">Kelola &amp; Lihat Unit</strong> untuk menambahkan unit.
+          </div>`;
+        return;
+      }
+
+      unitsToRender.forEach(unit => {
+        const unitMonthLogs = monthLogs.filter(l =>
+          l.equipmentId === unit.id ||
+          (l.equipmentCode && l.equipmentCode === unit.displayName) ||
+          (unit.code && l.equipmentCode && l.equipmentCode.startsWith(unit.code + ' '))
+        );
+
+        let sumBucket = 0;
+        let sumBreaker = 0;
+        unitMonthLogs.forEach(l => {
+          sumBucket += parseFloat(l.bucketHours) || 0;
+          sumBreaker += parseFloat(l.breakerHours) || 0;
+        });
+        const sumTotal = sumBucket + sumBreaker;
+
+        const unitSection = document.createElement('div');
+        unitSection.className = 'bg-slate-950/90 border border-slate-800 rounded-2xl p-4 space-y-3';
+
+        const headerDiv = document.createElement('div');
+        headerDiv.className = 'flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-slate-800/80';
+        headerDiv.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 flex items-center justify-center text-xs font-black">
+              <i class="fa-solid fa-truck-monster"></i>
+            </span>
+            <div>
+              <h4 class="text-xs sm:text-sm font-extrabold text-white">${unit.displayName}</h4>
+              <p class="text-[10px] text-slate-400">${unitMonthLogs.length} shift tercatat pada bulan ${selectedMonth}</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-[11px]">
+            <span class="px-2.5 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-bold">
+              Bucket: ${formatBoxNumber(sumBucket)}j
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30 text-blue-400 font-bold">
+              Breaker: ${formatBoxNumber(sumBreaker)}j
+            </span>
+            <span class="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-extrabold">
+              Total: ${formatBoxNumber(sumTotal)}j
+            </span>
+          </div>
+        `;
+        unitSection.appendChild(headerDiv);
+
+        const boxesWrapper = document.createElement('div');
+        boxesWrapper.className = 'flex flex-wrap gap-1.5 sm:gap-2';
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dayStr = String(day).padStart(2, '0');
+          const fullDateStr = `${selectedMonth}-${dayStr}`;
+
+          const dayLogs = unitMonthLogs.filter(l => l.date === fullDateStr);
+          let dayBucket = 0;
+          let dayBreaker = 0;
+
+          dayLogs.forEach(l => {
+            dayBucket += parseFloat(l.bucketHours) || 0;
+            dayBreaker += parseFloat(l.breakerHours) || 0;
+          });
+          const dayTotal = dayBucket + dayBreaker;
+
+          let boxClasses = '';
+          let valueLabel = '-';
+          let statusTitle = 'Tidak ada input';
+
+          if (dayLogs.length === 0 || (dayBucket === 0 && dayBreaker === 0)) {
+            boxClasses = 'bg-rose-600/90 hover:bg-rose-500 border-rose-400/70 text-white';
+            valueLabel = '-';
+            statusTitle = 'Tidak ada input';
+          } else if (dayBucket > 0 && dayBreaker === 0) {
+            boxClasses = 'bg-emerald-600 hover:bg-emerald-500 border-emerald-400 text-white';
+            valueLabel = `${formatBoxNumber(dayBucket)}j`;
+            statusTitle = `Bucket: ${formatBoxNumber(dayBucket)} Jam`;
+          } else if (dayBreaker > 0 && dayBucket === 0) {
+            boxClasses = 'bg-blue-600 hover:bg-blue-500 border-blue-400 text-white';
+            valueLabel = `${formatBoxNumber(dayBreaker)}j`;
+            statusTitle = `Breaker: ${formatBoxNumber(dayBreaker)} Jam`;
+          } else {
+            boxClasses = 'bg-amber-400 hover:bg-amber-300 border-amber-200 text-slate-950';
+            valueLabel = `${formatBoxNumber(dayTotal)}j`;
+            statusTitle = `Mix: Bucket ${formatBoxNumber(dayBucket)}j + Breaker ${formatBoxNumber(dayBreaker)}j`;
+          }
+
+          const boxBtn = document.createElement('button');
+          boxBtn.type = 'button';
+          boxBtn.title = `${fullDateStr} | ${unit.code} — ${statusTitle}`;
+          boxBtn.className = `w-12 h-14 sm:w-[54px] sm:h-[58px] rounded-xl border flex flex-col items-center justify-center transition-all duration-150 hover:scale-105 active:scale-95 shadow-sm cursor-pointer select-none ${boxClasses}`;
+          boxBtn.onclick = () => openDateLogDetailModal(unit.id, unit.displayName, fullDateStr);
+
+          boxBtn.innerHTML = `
+            <span class="text-[10px] font-bold opacity-85 leading-none mb-1">Tgl ${dayStr}</span>
+            <span class="text-xs sm:text-sm font-black leading-none tracking-tight">${valueLabel}</span>
+          `;
+          boxesWrapper.appendChild(boxBtn);
+        }
+
+        unitSection.appendChild(boxesWrapper);
+        container.appendChild(unitSection);
+      });
+    }
+
+    function openDateLogDetailModal(unitId, unitDisplayName, dateStr) {
+      const modal = document.getElementById('modalDateLogDetail');
+      if (!modal) return;
+
+      const unitCodePrefix = (unitDisplayName || '').split(' ')[0];
+      const unitLogs = dailyLogs.filter(l =>
+        l.date === dateStr &&
+        (l.equipmentId === unitId ||
+         l.equipmentCode === unitDisplayName ||
+         (unitCodePrefix && l.equipmentCode && l.equipmentCode.startsWith(unitCodePrefix + ' ')))
+      );
+
+      let totalBucket = 0;
+      let totalBreaker = 0;
+      unitLogs.forEach(l => {
+        totalBucket += parseFloat(l.bucketHours) || 0;
+        totalBreaker += parseFloat(l.breakerHours) || 0;
+      });
+      const grandTotal = totalBucket + totalBreaker;
+
+      const badgeEl = document.getElementById('dateDetailStatusBadge');
+      const dateEl = document.getElementById('dateDetailDateText');
+      const titleEl = document.getElementById('dateDetailUnitTitle');
+
+      if (dateEl) dateEl.innerText = `Tanggal: ${dateStr}`;
+      if (titleEl) titleEl.innerText = unitDisplayName;
+
+      if (badgeEl) {
+        if (unitLogs.length === 0 || (totalBucket === 0 && totalBreaker === 0)) {
+          badgeEl.innerText = 'MERAH • TIDAK ADA INPUT';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-500/20 text-rose-400 border border-rose-500/40';
+        } else if (totalBucket > 0 && totalBreaker === 0) {
+          badgeEl.innerText = 'HIJAU • BUCKET';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+        } else if (totalBreaker > 0 && totalBucket === 0) {
+          badgeEl.innerText = 'BIRU • BREAKER';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-blue-500/20 text-blue-400 border border-blue-500/40';
+        } else {
+          badgeEl.innerText = 'KUNING • MIX BUCKET & BREAKER';
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-400/20 text-amber-300 border border-amber-400/40';
         }
       }
 
-      if (mobileList) {
-        mobileList.innerHTML = '';
-        filtered.forEach(log => {
+      document.getElementById('dateDetailBucketTotal').innerText = `${formatBoxNumber(totalBucket)} Jam`;
+      document.getElementById('dateDetailBreakerTotal').innerText = `${formatBoxNumber(totalBreaker)} Jam`;
+      document.getElementById('dateDetailGrandTotal').innerText = `${formatBoxNumber(grandTotal)} Jam`;
+
+      const quickAddBtn = document.getElementById('btnQuickAddLogForDate');
+      if (quickAddBtn) {
+        quickAddBtn.onclick = () => {
+          closeModal('modalDateLogDetail');
+          switchTab('inputLog');
+          const logDateInput = document.getElementById('logDate');
+          const equipSelect = document.getElementById('logEquipmentSelect');
+          if (logDateInput) logDateInput.value = dateStr;
+          if (equipSelect && equipments.some(e => e.id === unitId)) {
+            equipSelect.value = unitId;
+            onEquipmentSelectChange();
+          }
+        };
+      }
+
+      const entriesContainer = document.getElementById('dateDetailEntriesContainer');
+      entriesContainer.innerHTML = '';
+
+      if (unitLogs.length === 0) {
+        entriesContainer.innerHTML = `
+          <div class="p-6 text-center bg-rose-500/5 border border-rose-500/20 rounded-xl space-y-2">
+            <div class="w-10 h-10 rounded-full bg-rose-500/10 text-rose-400 flex items-center justify-center mx-auto">
+              <i class="fa-solid fa-calendar-xmark text-base"></i>
+            </div>
+            <div class="text-xs font-bold text-rose-300">Belum Ada Input Log pada Tanggal ${dateStr}</div>
+            <p class="text-[11px] text-slate-400">Klik tombol <strong>Input Log Tanggal Ini</strong> di bawah jika unit bekerja pada tanggal tersebut.</p>
+          </div>
+        `;
+      } else {
+        const isAdmin = currentUser && currentUser.role === 'admin';
+        unitLogs.forEach((log, idx) => {
           const card = document.createElement('div');
-          card.className = 'bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2';
+          card.className = 'bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 text-xs';
+
+          const photoBtn = (log.photoDriveUrl || log.imageData) ? `
+            <button type="button" onclick="openImageViewerModal('${log.photoDriveUrl || log.imageData}', 'Bukti HM: ${log.equipmentCode} (${log.date})')" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[11px] font-semibold flex items-center gap-1 transition">
+              <i class="fa-solid ${log.photoDriveUrl ? 'fa-brands fa-google-drive text-emerald-400' : 'fa-image'}"></i> Lihat Foto Bukti
+            </button>
+          ` : `<span class="text-[11px] text-slate-500 italic">Tidak ada foto</span>`;
+
           card.innerHTML = `
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="text-xs font-bold text-amber-400">${log.equipmentCode}</div>
-                <div class="text-[10px] text-slate-400 font-mono">${log.date} &bull; ${log.location}</div>
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-amber-400 font-bold text-[10px]">Shift #${idx + 1}</span>
+                <span class="font-bold text-white"><i class="fa-solid fa-helmet-safety text-amber-400 mr-1"></i>${log.operator || '-'}</span>
               </div>
-              <span class="text-xs font-bold text-white">${log.totalHours || (parseFloat(log.bucketHours||0)+parseFloat(log.breakerHours||0)).toFixed(1)} Jam</span>
+              <span class="font-mono text-[11px] text-slate-400"><i class="fa-regular fa-clock mr-1"></i>${log.startTime || '08:00'} - ${log.endTime || '17:00'}</span>
             </div>
-            <div class="text-xs text-slate-300">
-              Op: <strong>${log.operator}</strong> | HM: ${log.hmAwal} &rarr; ${log.hmAkhir} (${log.totalHm} HM)
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-slate-300">
+              <div><span class="text-slate-400">Lokasi / Site:</span> <strong class="text-white">${log.location || '-'}</strong></div>
+              <div><span class="text-slate-400">Hour Meter (HM):</span> <strong class="font-mono text-amber-400">${log.hmAwal} &rarr; ${log.hmAkhir} (${log.totalHm} HM)</strong></div>
+              <div><span class="text-slate-400">Rincian Jam:</span> <strong class="text-emerald-400">Bucket ${log.bucketHours || 0}j</strong> | <strong class="text-blue-400">Breaker ${log.breakerHours || 0}j</strong></div>
+              <div class="flex items-center gap-2"><span class="text-slate-400">Dokumentasi:</span> ${photoBtn}</div>
             </div>
-            ${currentUser && currentUser.role === 'admin' ? `
-              <div class="flex justify-end items-center gap-2 pt-2 border-t border-slate-850">
-                <button type="button" onclick="editDailyLog('${log.id}')" class="text-xs text-amber-400 hover:text-amber-300 flex items-center gap-1 font-semibold">
-                  <i class="fa-solid fa-pen-to-square"></i> Edit
+
+            <div class="bg-slate-900/90 p-2.5 rounded-lg border border-slate-800/80 text-slate-300">
+              <span class="text-[10px] text-slate-400 uppercase font-bold block mb-0.5">Catatan Pekerjaan:</span>
+              <p class="text-xs italic">${log.notes || 'Tidak ada catatan tambahan.'}</p>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="sendLogToGoogleSheets('${log.id}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold ${log.synced ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
+                  <i class="fa-solid ${log.synced ? 'fa-check' : 'fa-cloud-arrow-up'}"></i> ${log.synced ? 'Tersinkron G-Sheets' : 'Sync G-Sheets'}
                 </button>
-                <span class="text-slate-700">|</span>
-                <button type="button" onclick="deleteDailyLog('${log.id}')" class="text-xs text-rose-400 hover:text-rose-300 flex items-center gap-1 font-semibold">
-                  <i class="fa-solid fa-trash-can"></i> Hapus
+                <button type="button" onclick="sendLogToWhatsApp('${log.id}')" class="px-2.5 py-1 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 rounded-lg text-[11px] font-semibold flex items-center gap-1">
+                  <i class="fa-brands fa-whatsapp"></i> Kirim WA
                 </button>
               </div>
-            ` : ''}
+              ${isAdmin ? `
+                <div class="flex items-center gap-2">
+                  <button type="button" onclick="closeModal('modalDateLogDetail'); editDailyLog('${log.id}');" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-lg text-[11px] font-bold">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit
+                  </button>
+                  <button type="button" onclick="deleteDailyLog('${log.id}'); openDateLogDetailModal('${unitId}', '${unitDisplayName.replace(/'/g, "\\'")}', '${dateStr}');" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-[11px] font-bold">
+                    <i class="fa-solid fa-trash-can"></i> Hapus
+                  </button>
+                </div>
+              ` : ''}
+            </div>
           `;
-          mobileList.appendChild(card);
+          entriesContainer.appendChild(card);
         });
       }
+
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
     }
 
-    /* Modal User Management Handlers */
+    /* ================= MODAL USER MANAGEMENT ================= */
     function openManageUsersModal() {
       if (!currentUser || currentUser.role !== 'admin') {
         showToast('Hanya Supervisor / Admin yang berhak mengelola akun pengguna!', 'warning');
@@ -6892,6 +7101,18 @@ function doPost(e) {
 
       resetUserForm();
       renderUsersListUI();
+    }
+
+    function deleteUser(userId) {
+      if (appUsers.length <= 1) {
+        showToast('Minimal harus ada 1 akun terdaftar.', 'warning');
+        return;
+      }
+      appUsers = appUsers.filter(u => u.id !== userId);
+      saveAllToStorage();
+      cloudDeleteDocument('users', userId);
+      renderUsersListUI();
+      showToast('Akun pengguna berhasil dihapus.', 'info');
     }
 
     /* ================= MANAJEMEN SERVIS AKTUAL & HISTORI ================= */
@@ -7177,10 +7398,15 @@ function doPost(e) {
         showToast('Hanya Supervisor / Admin yang dapat menghapus log operasional.', 'warning');
         return;
       }
+      const targetLog = dailyLogs.find(l => l.id === id);
       dailyLogs = dailyLogs.filter(l => l.id !== id);
       saveAllToStorage();
       cloudDeleteDocument('daily_logs', id);
-      
+
+      if (targetLog && googleSheetsUrl) {
+        notifyGoogleSheetsDeleteLog(targetLog);
+      }
+
       renderDailyLogsTable();
       renderDashboardRecentLogs();
       updateDashboardKPIs();
@@ -7212,19 +7438,6 @@ function doPost(e) {
       }
     }
 
-    function deleteUser(userId) {
-      if (appUsers.length <= 1) {
-        showToast('Minimal harus ada 1 akun terdaftar.', 'warning');
-        return;
-      }
-      appUsers = appUsers.filter(u => u.id !== userId);
-      saveAllToStorage();
-      cloudDeleteDocument('users', userId);
-      renderUsersListUI();
-      showToast('Akun pengguna berhasil dihapus.', 'info');
-    }
-
-    /* Modal Handlers & Other Utilities */
     function closeModal(id) {
       const el = document.getElementById(id);
       if (el) {
@@ -7373,7 +7586,7 @@ function doPost(e) {
 
     function exportDatabaseBackupJSON() {
       const data = {
-        equipments, dailyLogs, fuelLogs, serviceSchedules, serviceActionHistory, equipmentExpenses, appUsers
+        equipments, dailyLogs, fuelLogs, serviceSchedules, serviceActionHistory, equipmentExpenses, appUsers, trucks, truckShipments
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
@@ -7399,6 +7612,8 @@ function doPost(e) {
           if (parsed.serviceActionHistory) serviceActionHistory = parsed.serviceActionHistory;
           if (parsed.equipmentExpenses) equipmentExpenses = parsed.equipmentExpenses;
           if (parsed.appUsers) appUsers = parsed.appUsers;
+          if (parsed.trucks) trucks = parsed.trucks;
+          if (parsed.truckShipments) truckShipments = parsed.truckShipments;
           saveAllToStorage();
           renderAppView();
           showToast('Data berhasil dipulihkan dari cadangan!', 'success');
@@ -7436,38 +7651,24 @@ function doPost(e) {
         return;
       }
 
-      const editId = document.getElementById('editEquipId');
-      const codeInp = document.getElementById('newEquipCode');
-      const catInp = document.getElementById('newEquipCategory');
-      const modelInp = document.getElementById('newEquipModel');
-      const hmInp = document.getElementById('newEquipCurrentHM');
-      const title = document.getElementById('modalAddEquipmentTitle');
-      const btnSubmit = document.getElementById('btnSubmitEquipForm');
-
-      if (editId) editId.value = eq.id;
-      if (codeInp) codeInp.value = eq.code || '';
-      if (catInp) catInp.value = eq.category || 'Excavator';
-      if (modelInp) modelInp.value = eq.model || '';
-      if (hmInp) hmInp.value = eq.currentHM !== undefined ? eq.currentHM : 0;
-      if (title) title.innerHTML = '<i class="fa-solid fa-pen-to-square text-amber-500"></i> Ubah Data Unit Alat Berat';
-      if (btnSubmit) btnSubmit.innerText = 'Perbarui Data Unit';
+      document.getElementById('editEquipId').value = eq.id;
+      document.getElementById('newEquipCode').value = eq.code || '';
+      document.getElementById('newEquipCategory').value = eq.category || 'Excavator';
+      document.getElementById('newEquipModel').value = eq.model || '';
+      document.getElementById('newEquipCurrentHM').value = eq.currentHM !== undefined ? eq.currentHM : 0;
+      document.getElementById('modalAddEquipmentTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-amber-500"></i> Ubah Data Unit Alat Berat';
+      document.getElementById('btnSubmitEquipForm').innerText = 'Perbarui Data Unit';
 
       const m = document.getElementById('modalAddEquipment');
       if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
     }
 
     function openManageEquipmentModal() {
-      try {
-        renderManageEquipmentList();
-      } catch (err) {
-        console.error("Gagal merender list unit:", err);
-      }
+      renderManageEquipmentList();
       const m = document.getElementById('modalManageEquipment');
       if (m) {
         m.classList.remove('hidden');
         m.classList.add('flex');
-      } else {
-        console.error("Modal #modalManageEquipment tidak ditemukan di DOM!");
       }
     }
 
@@ -7502,10 +7703,10 @@ function doPost(e) {
           </div>
           ${isAdmin ? `
             <div class="inline-flex items-center gap-1.5">
-              <button type="button" onclick="editEquipment('${eq.id}')" title="Edit Data Unit (Admin Saja)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+              <button type="button" onclick="editEquipment('${eq.id}')" title="Edit Data Unit" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 rounded-lg text-xs font-semibold transition flex items-center gap-1">
                 <i class="fa-solid fa-pen-to-square"></i> Edit
               </button>
-              <button type="button" onclick="deleteEquipment('${eq.id}')" title="Hapus Unit (Admin Saja)" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+              <button type="button" onclick="deleteEquipment('${eq.id}')" title="Hapus Unit" class="px-2.5 py-1 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-xs font-semibold transition flex items-center gap-1">
                 <i class="fa-solid fa-trash-can"></i> Hapus
               </button>
             </div>
@@ -7536,7 +7737,6 @@ function doPost(e) {
       }
 
       if (editId) {
-        // Mode Perbarui / Edit Unit
         const eq = equipments.find(item => item.id === editId);
         if (eq) {
           const oldFullCode = `${eq.code} (${eq.category} - ${eq.model})`;
@@ -7547,7 +7747,6 @@ function doPost(e) {
           eq.model = model;
           eq.currentHM = hm;
 
-          // Sinkronkan nama unit pada log operasional dan solar bila ada
           dailyLogs.forEach(l => {
             if (l.equipmentId === eq.id || l.equipmentCode === oldFullCode) {
               l.equipmentCode = newFullCode;
@@ -7564,8 +7763,6 @@ function doPost(e) {
           showToast(`Data unit ${code} berhasil diperbarui!`, 'success');
         }
       } else {
-        // Mode Tambah Unit Baru
-        // Cek duplikasi kode
         const exists = equipments.some(item => item.code.toLowerCase() === code.toLowerCase());
         if (exists) {
           showToast(`Unit dengan kode "${code}" sudah terdaftar! Gunakan kode lain.`, 'warning');
@@ -7586,17 +7783,8 @@ function doPost(e) {
       populateEquipmentDropdowns();
       populateInvoiceFilters();
       renderManageEquipmentList();
+      renderDailyLogsTable();
       closeModal('modalAddEquipment');
-
-      // Reset form input
-      const codeInp = document.getElementById('newEquipCode');
-      const modelInp = document.getElementById('newEquipModel');
-      const hmInp = document.getElementById('newEquipCurrentHM');
-      const editIdInp = document.getElementById('editEquipId');
-      if (codeInp) codeInp.value = '';
-      if (modelInp) modelInp.value = '';
-      if (hmInp) hmInp.value = '';
-      if (editIdInp) editIdInp.value = '';
     }
 
     function deleteEquipment(id) {
@@ -7612,10 +7800,11 @@ function doPost(e) {
       renderManageEquipmentList();
       populateEquipmentDropdowns();
       populateInvoiceFilters();
+      renderDailyLogsTable();
       showToast(`Unit alat ${code} berhasil dihapus.`, 'info');
     }
 
-    /* ================= FUNGSI EDIT LAPORAN REKAPITULASI HM (KHUSUS ADMIN) ================= */
+    /* ================= FUNGSI EDIT LAPORAN REKAPITULASI HM ================= */
     function editDailyLog(logId) {
       if (!currentUser || currentUser.role !== 'admin') {
         showToast('Akses ditolak: Hanya Supervisor / Admin yang dapat mengedit laporan HM!', 'warning');
@@ -7628,54 +7817,25 @@ function doPost(e) {
         return;
       }
 
-      const idInp = document.getElementById('editLogId');
-      const dateInp = document.getElementById('editLogDate');
-      const opInp = document.getElementById('editLogOperator');
-      const locInp = document.getElementById('editLogLocation');
-      const equipDisplay = document.getElementById('editLogEquipmentDisplay');
-      const startInp = document.getElementById('editLogStartTime');
-      const endInp = document.getElementById('editLogEndTime');
-      const bktInp = document.getElementById('editLogBucketHours');
-      const brkInp = document.getElementById('editLogBreakerHours');
-      const hmAwalInp = document.getElementById('editLogHmAwal');
-      const hmAkhirInp = document.getElementById('editLogHmAkhir');
-      const notesInp = document.getElementById('editLogNotes');
+      document.getElementById('editLogId').value = log.id;
+      document.getElementById('editLogDate').value = log.date || '';
+      document.getElementById('editLogOperator').value = log.operator || '';
+      document.getElementById('editLogLocation').value = log.location || '';
+      document.getElementById('editLogEquipmentDisplay').value = log.equipmentCode || '-';
+      document.getElementById('editLogStartTime').value = log.startTime || '08:00';
+      document.getElementById('editLogEndTime').value = log.endTime || '17:00';
+      document.getElementById('editLogBucketHours').value = log.bucketHours !== undefined ? log.bucketHours : 0;
+      document.getElementById('editLogBreakerHours').value = log.breakerHours !== undefined ? log.breakerHours : 0;
+      document.getElementById('editLogHmAwal').value = log.hmAwal !== undefined ? log.hmAwal : 0;
+      document.getElementById('editLogHmAkhir').value = log.hmAkhir !== undefined ? log.hmAkhir : 0;
+      document.getElementById('editLogNotes').value = log.notes || '';
 
-      if (idInp) idInp.value = log.id;
-      if (dateInp) dateInp.value = log.date || '';
-      if (opInp) opInp.value = log.operator || '';
-      if (locInp) locInp.value = log.location || '';
-      if (equipDisplay) equipDisplay.value = log.equipmentCode || '-';
-      if (startInp) startInp.value = log.startTime || '08:00';
-      if (endInp) endInp.value = log.endTime || '17:00';
-      if (bktInp) bktInp.value = log.bucketHours !== undefined ? log.bucketHours : 0;
-      if (brkInp) brkInp.value = log.breakerHours !== undefined ? log.breakerHours : 0;
-      if (hmAwalInp) hmAwalInp.value = log.hmAwal !== undefined ? log.hmAwal : 0;
-      if (hmAkhirInp) hmAkhirInp.value = log.hmAkhir !== undefined ? log.hmAkhir : 0;
-      if (notesInp) notesInp.value = log.notes || '';
-
-      calculateEditLogHours();
+      calculateEditLogHours(true);
 
       const modal = document.getElementById('modalEditDailyLog');
       if (modal) {
         modal.classList.remove('hidden');
         modal.classList.add('flex');
-      }
-    }
-
-    function calculateEditLogHours() {
-      const awal = parseFloat(document.getElementById('editLogHmAwal')?.value) || 0;
-      const akhir = parseFloat(document.getElementById('editLogHmAkhir')?.value) || 0;
-      const warning = document.getElementById('editHmWarningMsg');
-      const display = document.getElementById('editLogTotalHmDisplay');
-
-      if (akhir < awal && akhir !== 0) {
-        if (warning) warning.classList.remove('hidden');
-        if (display) display.innerText = '0.0';
-      } else {
-        if (warning) warning.classList.add('hidden');
-        const diff = Math.max(0, akhir - awal).toFixed(1);
-        if (display) display.innerText = diff;
       }
     }
 
@@ -7718,8 +7878,8 @@ function doPost(e) {
       log.hmAkhir = hmAkhir;
       log.totalHm = parseFloat(totalHm);
       log.notes = (document.getElementById('editLogNotes')?.value || '').trim();
+      log.synced = false;
 
-      // Sinkronkan HM unit jika log ini merupakan entri HM terbaru
       const eq = equipments.find(item => item.id === log.equipmentId);
       if (eq && hmAkhir > (eq.currentHM || 0)) {
         eq.currentHM = hmAkhir;
@@ -7737,7 +7897,11 @@ function doPost(e) {
       generateInvoicePreview();
 
       closeModal('modalEditDailyLog');
-      showToast('Laporan rekapitulasi HM berhasil diperbarui!', 'success');
+      showToast('Laporan rekapitulasi HM diperbarui & disinkronkan!', 'success');
+
+      if (googleSheetsUrl) {
+        sendLogToGoogleSheets(log.id, true);
+      }
     }
 
     function openAddServiceModal() {
@@ -7803,7 +7967,6 @@ function doPost(e) {
       updateDashboardKPIs();
       closeModal('modalAddService');
 
-      // Reset form modal
       const formEl = document.getElementById('addServiceScheduleForm');
       if (formEl) formEl.reset();
 
@@ -7918,25 +8081,13 @@ function doPost(e) {
       }
     }
 
-    async function syncAllPendingToGoogleSheets() {
-      if (!googleSheetsUrl) {
-        showToast('Atur URL Google Sheets terlebih dahulu!', 'warning');
-        return;
-      }
-      const pending = dailyLogs.filter(l => !l.synced);
-      for (const log of pending) {
-        await sendLogToGoogleSheets(log.id);
-      }
-      showToast('Sinkronisasi Google Sheets selesai!', 'success');
-    }
-
     function openImageViewerModal(src, title) {
       const modal = document.getElementById('modalImageViewer');
       const img = document.getElementById('modalFullImage');
       const titleEl = document.getElementById('modalImageTitle');
       if (modal && img) {
         img.src = src;
-        if (titleEl) titleEl.innerText = title;
+        if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-image text-amber-400"></i> ${title || 'Dokumentasi Log'}`;
         modal.classList.remove('hidden');
         modal.classList.add('flex');
       }
@@ -7972,25 +8123,15 @@ function doPost(e) {
         return;
       }
 
-      const editId = document.getElementById('editTruckId');
-      const nameInput = document.getElementById('newTruckName');
-      const plateInput = document.getElementById('newTruckPlate');
-      const modelInput = document.getElementById('newTruckModel');
-      const statusInput = document.getElementById('newTruckStatus');
-      const driverInput = document.getElementById('newTruckDriver');
-      const phoneInput = document.getElementById('newTruckPhone');
-      const title = document.getElementById('modalTruckTitle');
-      const btnSubmit = document.getElementById('btnSubmitTruckForm');
-
-      if (editId) editId.value = trk.id;
-      if (nameInput) nameInput.value = trk.name || '';
-      if (plateInput) plateInput.value = trk.plateNumber || '';
-      if (modelInput) modelInput.value = trk.model || '';
-      if (statusInput) statusInput.value = trk.status || 'Aktif';
-      if (driverInput) driverInput.value = trk.defaultDriver || '';
-      if (phoneInput) phoneInput.value = (trk.phone && trk.phone !== '-') ? trk.phone : '';
-      if (title) title.innerHTML = '<i class="fa-solid fa-pen-to-square text-amber-500"></i> Ubah Data Armada Truk';
-      if (btnSubmit) btnSubmit.innerText = 'Perbarui Data Truk';
+      document.getElementById('editTruckId').value = trk.id;
+      document.getElementById('newTruckName').value = trk.name || '';
+      document.getElementById('newTruckPlate').value = trk.plateNumber || '';
+      document.getElementById('newTruckModel').value = trk.model || '';
+      document.getElementById('newTruckStatus').value = trk.status || 'Aktif';
+      document.getElementById('newTruckDriver').value = trk.defaultDriver || '';
+      document.getElementById('newTruckPhone').value = (trk.phone && trk.phone !== '-') ? trk.phone : '';
+      document.getElementById('modalTruckTitle').innerHTML = '<i class="fa-solid fa-pen-to-square text-amber-500"></i> Ubah Data Armada Truk';
+      document.getElementById('btnSubmitTruckForm').innerText = 'Perbarui Data Truk';
 
       const modal = document.getElementById('modalAddTruck');
       if (modal) {
@@ -8015,7 +8156,6 @@ function doPost(e) {
       }
 
       if (editId) {
-        // Mode Perbarui (Edit)
         const trk = trucks.find(t => t.id === editId);
         if (trk) {
           trk.name = name;
@@ -8030,7 +8170,6 @@ function doPost(e) {
           showToast(`Data armada ${name} (${plate}) berhasil diperbarui!`, 'success');
         }
       } else {
-        // Mode Tambah Baru
         const newTruck = {
           id: 'TRK-' + new Date().getTime(),
           name,
@@ -8144,31 +8283,6 @@ function doPost(e) {
       }
     }
 
-    function deleteEquipmentExpense(id) {
-      if (currentUser && currentUser.role !== 'admin') {
-        showToast('Hanya Supervisor / Admin yang dapat menghapus data pengeluaran.', 'warning');
-        return;
-      }
-      equipmentExpenses = equipmentExpenses.filter(e => e.id !== id);
-      saveAllToStorage();
-      cloudDeleteDocument('equipment_expenses', id);
-      updateDashboardKPIs();
-      renderExpensesTable();
-      showToast('Data pengeluaran berhasil dihapus.', 'info');
-    }
-
-    function deleteTruckShipment(id) {
-      if (!currentUser || currentUser.role !== 'admin') {
-        showToast('Akses ditolak: Hanya Supervisor / Admin yang berhak menghapus data kiriman truk!', 'warning');
-        return;
-      }
-      truckShipments = truckShipments.filter(s => s.id !== id);
-      saveAllToStorage();
-      cloudDeleteDocument('truck_shipments', id);
-      renderTruckShipmentsTable();
-      showToast('Data kiriman truk berhasil dihapus.', 'info');
-    }
-
     function deleteTruck(id) {
       if (currentUser && currentUser.role !== 'admin') {
         showToast('Hanya Supervisor / Admin yang dapat menghapus armada truk.', 'warning');
@@ -8225,7 +8339,7 @@ function doPost(e) {
       }
     }
 
-    /* ================= DATA KIRIMAN TRUK (MULTI BARANG & STATUS BAYAR) ================= */
+    /* ================= DATA KIRIMAN TRUK ================= */
     function initDefaultShipmentItems() {
       const container = document.getElementById('shipmentItemsContainer');
       if (container && container.children.length === 0) {
@@ -8309,7 +8423,6 @@ function doPost(e) {
       const clientName = document.getElementById('shipmentClientName')?.value.trim() || '-';
       const notes = document.getElementById('shipmentNotes')?.value.trim() || '-';
 
-      // Ekstrak multi-barang dari DOM
       const rows = document.querySelectorAll('#shipmentItemsContainer .shipment-item-row');
       const items = [];
       rows.forEach(r => {
@@ -8376,7 +8489,7 @@ function doPost(e) {
       if (tbody) {
         tbody.innerHTML = '';
         if (filtered.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="9" class="py-6 text-center text-slate-500">Belum ada riwayat kiriman truk yang sesuai filter.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="10" class="py-6 text-center text-slate-500">Belum ada riwayat kiriman truk yang sesuai filter.</td></tr>';
         } else {
           filtered.forEach(s => {
             const tr = document.createElement('tr');
@@ -8516,7 +8629,6 @@ function doPost(e) {
       showToast('File CSV kiriman truk berhasil diunduh!', 'success');
     }
 
-    /* ================= FUNGSI CETAK SURAT JALAN TRUK / SIMPAN PDF ================= */
     function printTruckDeliveryNote(shipmentId) {
       const shp = truckShipments.find(s => s.id === shipmentId);
       if (!shp) {
@@ -8524,7 +8636,6 @@ function doPost(e) {
         return;
       }
 
-      // 1. Isi Data Header Surat Jalan
       const docNoEl = document.getElementById('dnDocNumber');
       const docDateEl = document.getElementById('dnDocDate');
       const docTruckEl = document.getElementById('dnDocTruckName');
@@ -8564,7 +8675,6 @@ function doPost(e) {
       if (docSignerSenderEl) docSignerSenderEl.innerText = `( ${currentUser?.name || 'Bag. Logistik'} )`;
       if (docSignerDriverEl) docSignerDriverEl.innerText = `( ${shp.driverName || 'Nama Supir'} )`;
 
-      // 2. Isi Tabel Multi Barang Kiriman
       const tbody = document.getElementById('dnDocItemsTableBody');
       if (tbody) {
         tbody.innerHTML = '';
@@ -8586,7 +8696,6 @@ function doPost(e) {
         }
       }
 
-      // 3. Tampilkan lembar surat jalan & picu jendela cetak/PDF
       const printDoc = document.getElementById('truckDeliveryNotePrintDocument');
       if (printDoc) printDoc.classList.remove('hidden');
 
