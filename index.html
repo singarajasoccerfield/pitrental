@@ -3024,6 +3024,61 @@
     </div>
   </div>
 
+  <!-- Modal: Konfirmasi Input HM Sebelum Disimpan -->
+  <div id="modalConfirmSaveDailyLog" class="fixed inset-0 z-[96] bg-slate-900/75 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white border-2 border-amber-300 rounded-3xl w-full max-w-md p-6 shadow-2xl space-y-4">
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-amber-100 border border-amber-300 text-amber-600 mx-auto flex items-center justify-center text-2xl shadow-2xs">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-50 text-amber-700 border border-amber-200">
+          <i class="fa-solid fa-volume-high"></i> Konfirmasi Data Input HM
+        </span>
+        <h3 class="text-base sm:text-lg font-black text-slate-900 uppercase leading-snug tracking-tight">
+          YAKINKAH ANDA SUDAH BENAR TOLONG DICEK KEMBALI
+        </h3>
+      </div>
+
+      <div class="bg-sky-50/70 border border-sky-100 rounded-2xl p-4 space-y-2.5 text-xs">
+        <div class="flex items-start justify-between gap-3 pb-2 border-b border-sky-100">
+          <span class="text-slate-500 font-semibold">Nama Operator</span>
+          <strong id="confirmLogOperatorText" class="text-slate-900 font-extrabold text-right">-</strong>
+        </div>
+        <div class="flex items-start justify-between gap-3 pb-2 border-b border-sky-100">
+          <span class="text-slate-500 font-semibold">Nama Alat</span>
+          <strong id="confirmLogEquipText" class="text-sky-700 font-extrabold text-right">-</strong>
+        </div>
+        <div class="flex items-start justify-between gap-3 pb-2 border-b border-sky-100">
+          <span class="text-slate-500 font-semibold">Tanggal</span>
+          <strong id="confirmLogDateText" class="text-slate-900 font-mono font-extrabold text-right">-</strong>
+        </div>
+        <div class="flex items-start justify-between gap-3 pb-2 border-b border-sky-100">
+          <span class="text-slate-500 font-semibold">Lokasi</span>
+          <strong id="confirmLogLocationText" class="text-slate-900 font-extrabold text-right">-</strong>
+        </div>
+        <div class="flex items-start justify-between gap-3">
+          <span class="text-slate-500 font-semibold">Jam Kerja</span>
+          <div class="text-right">
+            <strong id="confirmLogWorkHoursText" class="text-emerald-700 font-black block">-</strong>
+            <span id="confirmLogHmRangeText" class="text-[11px] font-mono text-slate-500">HM: -</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2 pt-1">
+        <button type="button" onclick="speakConfirmSaveDailyLogVoiceOver()" title="Putar Ulang Suara Konfirmasi" class="py-3 px-3 bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 rounded-2xl text-xs font-bold transition flex items-center justify-center gap-1">
+          <i class="fa-solid fa-volume-high"></i>
+        </button>
+        <button type="button" onclick="cancelConfirmSaveDailyLog()" class="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-2xl text-xs font-bold transition">
+          Cek Kembali
+        </button>
+        <button type="button" onclick="confirmAndExecuteSaveDailyLog()" class="flex-1 py-3 px-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white rounded-2xl text-xs font-extrabold transition flex items-center justify-center gap-1.5 shadow-md shadow-sky-500/20">
+          <i class="fa-solid fa-check"></i> <span>Ya, Sudah Benar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Modal: Tambah & Edit Unit Alat Berat -->
   <div id="modalAddEquipment" class="fixed inset-0 z-[70] bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
     <div class="bg-white border border-sky-100 rounded-3xl w-full max-w-md p-6 shadow-2xl relative">
@@ -7326,7 +7381,9 @@ service cloud.firestore {
       calculateTotalHm(false);
     }
 
-    async function handleSaveDailyLog(e) {
+    let pendingDailyLogDraft = null;
+
+    function handleSaveDailyLog(e) {
       e.preventDefault();
       const equipId = document.getElementById('logEquipmentSelect')?.value;
       const equip = equipments.find(item => item.id === equipId);
@@ -7365,6 +7422,101 @@ service cloud.firestore {
         return;
       }
 
+      const operatorName = document.getElementById('logOperatorName').value.trim();
+      const workLocation = document.getElementById('logWorkLocation').value.trim();
+
+      pendingDailyLogDraft = {
+        equip,
+        date: selectedLogDate,
+        equipmentId: equip.id,
+        equipmentCode: unitFullLabel,
+        operator: operatorName,
+        location: workLocation,
+        startTime: document.getElementById('logStartTime').value,
+        endTime: document.getElementById('logEndTime').value,
+        bucketHours: bkt,
+        breakerHours: brk,
+        totalHours: totalJam,
+        hmAwal,
+        hmAkhir,
+        totalHm,
+        notes: (document.getElementById('logNotes')?.value || '').trim()
+      };
+
+      const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+      setTxt('confirmLogOperatorText', operatorName || '-');
+      setTxt('confirmLogEquipText', unitFullLabel);
+      setTxt('confirmLogDateText', selectedLogDate || '-');
+      setTxt('confirmLogLocationText', workLocation || '-');
+      setTxt('confirmLogWorkHoursText', `${totalJam} Jam (Bucket: ${bkt}j | Breaker: ${brk}j)`);
+      setTxt('confirmLogHmRangeText', `HM: ${hmAwal} → ${hmAkhir} (${totalHm} HM)`);
+
+      const modal = document.getElementById('modalConfirmSaveDailyLog');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+      speakConfirmSaveDailyLogVoiceOver();
+    }
+
+    function speakConfirmSaveDailyLogVoiceOver() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtx) {
+          const ctx = new AudioCtx();
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+          osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.14, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.29);
+        }
+      } catch (e) {}
+
+      try {
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance('YAKINKAH ANDA SUDAH BENAR, TOLONG DICEK KEMBALI!');
+          utterance.lang = 'id-ID';
+          utterance.rate = 0.96;
+          utterance.pitch = 1.02;
+          utterance.volume = 1.0;
+
+          const voices = window.speechSynthesis.getVoices();
+          const idVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes('id'));
+          if (idVoice) {
+            utterance.voice = idVoice;
+          }
+
+          window.speechSynthesis.speak(utterance);
+        }
+      } catch (err) {
+        console.warn('Voice over konfirmasi tidak didukung pada browser ini:', err);
+      }
+    }
+
+    function cancelConfirmSaveDailyLog() {
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch (e) {}
+      closeModal('modalConfirmSaveDailyLog');
+    }
+
+    async function confirmAndExecuteSaveDailyLog() {
+      try {
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      } catch (e) {}
+      if (!pendingDailyLogDraft) return;
+      const draft = pendingDailyLogDraft;
+      pendingDailyLogDraft = null;
+      closeModal('modalConfirmSaveDailyLog');
+
+      const equip = draft.equip;
       const saveBtn = document.getElementById('saveLogBtn');
       const saveBtnText = document.getElementById('saveLogBtnText');
       const notice = document.getElementById('uploadStatusNotice');
@@ -7399,27 +7551,27 @@ service cloud.firestore {
 
       const newLog = {
         id: 'LOG-' + new Date().getTime(),
-        date: document.getElementById('logDate').value,
-        equipmentId: equip.id,
-        equipmentCode: `${equip.code} (${equip.category} - ${equip.model})`,
-        operator: document.getElementById('logOperatorName').value.trim(),
-        location: document.getElementById('logWorkLocation').value.trim(),
-        startTime: document.getElementById('logStartTime').value,
-        endTime: document.getElementById('logEndTime').value,
-        bucketHours: bkt,
-        breakerHours: brk,
-        totalHours: totalJam,
-        hmAwal: hmAwal,
-        hmAkhir: hmAkhir,
-        totalHm: totalHm,
-        notes: (document.getElementById('logNotes')?.value || '').trim(),
+        date: draft.date,
+        equipmentId: draft.equipmentId,
+        equipmentCode: draft.equipmentCode,
+        operator: draft.operator,
+        location: draft.location,
+        startTime: draft.startTime,
+        endTime: draft.endTime,
+        bucketHours: draft.bucketHours,
+        breakerHours: draft.breakerHours,
+        totalHours: draft.totalHours,
+        hmAwal: draft.hmAwal,
+        hmAkhir: draft.hmAkhir,
+        totalHm: draft.totalHm,
+        notes: draft.notes,
         imageData: googleDrivePhotoUrl || currentUploadedImageData,
         photoDriveUrl: googleDrivePhotoUrl || '',
         synced: false
       };
 
       dailyLogs.push(newLog);
-      equip.currentHM = hmAkhir;
+      equip.currentHM = draft.hmAkhir;
       saveAllToStorage();
 
       cloudSaveDocument('daily_logs', newLog.id, newLog);
